@@ -29,6 +29,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.htw.ip.basics.BasicAlgorithms;
+import de.htw.ip.potrace.ContourAlgorithm;
 
 public class Binarize extends JPanel {
 	
@@ -39,7 +40,7 @@ public class Binarize extends JPanel {
 	private static final File openPath = new File(".");
 	private static final String title = "Binarisierung";
 	private static final String author = "Goohsen";
-	private static final String initalOpen = "sample.png";
+	private static final String initalOpen = "klein.png";
 	
 	private static JFrame frame;
 	
@@ -96,35 +97,6 @@ public class Binarize extends JPanel {
         	}
         });
         
-        JButton erodeBtn = new JButton("Erode");
-        erodeBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dstPixels = BasicAlgorithms.erode(dstPixels, srcView.getImgWidth(), srcView.getImgHeight());
-				dstView.setPixels(dstPixels, srcView.getImgWidth(), srcView.getImgHeight());
-			}
-		});
-        
-        JButton dilateBtn = new JButton("Dilate");
-        dilateBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dstPixels = BasicAlgorithms.dilateOptimized(dstPixels, srcView.getImgWidth(), srcView.getImgHeight());
-				dstView.setPixels(dstPixels, srcView.getImgWidth(), srcView.getImgHeight());
-			}
-		});
-        
-        JButton invertBtn = new JButton("Invert");
-        invertBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dstPixels = BasicAlgorithms.invert(dstPixels);
-				dstView.setPixels(BasicAlgorithms.invert(dstPixels), srcView.getImgWidth(), srcView.getImgHeight());
-			}
-		});
         
         // some status text
         statusLine = new JLabel(" ");
@@ -152,10 +124,6 @@ public class Binarize extends JPanel {
         JPanel images = new JPanel(new FlowLayout());
         images.add(srcView);
         images.add(dstView);
-        
-        images.add(erodeBtn);
-        images.add(dilateBtn);
-        images.add(invertBtn);
         
         add(controls, BorderLayout.NORTH);
         add(images, BorderLayout.CENTER);
@@ -241,17 +209,19 @@ public class Binarize extends JPanel {
 		threshold = BasicAlgorithms.getIsoDataThreshold(dstPixels);
 		binarize(dstPixels, threshold);
 		
-//    	switch(methodList.getSelectedIndex()) {
-//    	case 0:	// 50% Schwellwert
-//    		thresholdSlider.setEnabled(true);
-//    		binarize(dstPixels, thresholdSlider.getValue());
-//    		break;
+    	switch(methodList.getSelectedIndex()) {
+    	case 0:	// 50% Schwellwert
+    		threshold = BasicAlgorithms.getIsoDataThreshold(dstPixels);
+    		binarize(dstPixels, threshold);
+    		ContourAlgorithm.potrace(dstPixels, width, height);
+    		break;
 //    	case 1:	// ISO-Data-Algorithmus
 //    		thresholdSlider.setEnabled(false);
 //    		threshold = BasicAlgorithms.getIsoDataThreshold(dstPixels);
 //    		binarize(dstPixels, threshold);
 //    		thresholdSlider.setValue(threshold);
 //    		break;
+    	}
    
 
 		long time = System.currentTimeMillis() - startTime;
