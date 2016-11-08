@@ -1,6 +1,7 @@
 package de.htw.ip.potrace;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ContourAlgorithm {
@@ -8,14 +9,15 @@ public class ContourAlgorithm {
 	private final static int BLACK = 0xFF000000;
 	private final static int WHITE = 0xFFFFFFFF;
 	
+	private static List<List<Integer>> paths = new ArrayList<List<Integer>>();
+	
 	public static void potrace(int[] pixels, int imgWidth, int imgHeight){
-		List<List<Integer>> paths = new ArrayList<List<Integer>>();
-		Path<Integer> path = new Path<Integer>();
 		outerloop:
 		for (int h = 0; h < imgHeight; h++){
 			for (int w = 0; w < imgWidth; w++) {
 				int pos = h * imgWidth + w;
 				if (pixels[pos] == BLACK){
+					Path<Integer> path = new Path<Integer>();
 					path.add(pos);
 					path.add(pos+imgWidth);
 					int newPxl = findPath(pixels, path, imgWidth);
@@ -23,13 +25,15 @@ public class ContourAlgorithm {
 						path.add(newPxl);
 						newPxl = findPath(pixels, path, imgWidth);
 					}
-					break outerloop;
+					paths.add(path);
 //					path.setType(true);
+					int[] invertedPixels = invertClosedRegion(pixels, path, imgWidth);
+					potrace(invertedPixels, imgWidth, imgHeight);
+
+					break outerloop;
 				}
 			}
 		}
-		paths.add(path);
-		System.out.println(paths);
 	}
 	
 	private static int findPath(int[] pixels, Path<Integer> path, int imgWidth){
@@ -126,6 +130,30 @@ public class ContourAlgorithm {
 			break;
 		}
 		return aD;
+	}
+	
+	private static int[] invertClosedRegion(int[] pixels, Path<Integer> path, int imgWidth){
+		int[] invertedPixels = Arrays.copyOf(pixels, pixels.length);
+		for (int i = 1; i < path.size(); i++) {
+			int current = path.get(i);
+			int previous  = path.get(i-1);
+			if (current-previous == imgWidth){
+				invertPixels(invertedPixels, previous, imgWidth);
+			} else if(current-previous == -imgWidth){
+				invertPixels(invertedPixels, current, imgWidth);
+			}
+		}
+		return invertedPixels;
+	}
+	
+	private static void invertPixels(int[] invertedPixels, int start, int imgWidth){
+		int current = start;
+		while(current % imgWidth != 0){
+			invertedPixels[current] = (invertedPixels[current] == BLACK) ? WHITE:BLACK;
+//			System.out.print(invertedPixels[current]);
+			current++;
+		}
+//		System.out.println("");
 	}
 
 }
