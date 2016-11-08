@@ -9,34 +9,52 @@ public class ContourAlgorithm {
 	private final static int BLACK = 0xFF000000;
 	private final static int WHITE = 0xFFFFFFFF;
 	
-	private static List<List<Integer>> paths = new ArrayList<List<Integer>>();
-	
 	public static void potrace(int[] pixels, int imgWidth, int imgHeight){
+		List<List<Integer>> paths = new ArrayList<List<Integer>>();
+		findPaths(pixels, imgWidth, imgHeight, paths);
+		System.out.println(paths);
+		for (int i = 0; i < paths.size();i++) {
+			System.out.println(paths.get(i));
+			
+		}
+		
+		drawContours(pixels, paths);
+	}
+	
+	private static void drawContours(int[] pixels, List<List<Integer>> paths) {
+		
+	}
+
+	private static void findPaths(int[] pixels, int imgWidth, int imgHeight, List<List<Integer>> paths){
 		outerloop:
 		for (int h = 0; h < imgHeight; h++){
 			for (int w = 0; w < imgWidth; w++) {
 				int pos = h * imgWidth + w;
 				if (pixels[pos] == BLACK){
-					Path<Integer> path = new Path<Integer>();
-					path.add(pos);
-					path.add(pos+imgWidth);
-					int newPxl = findPath(pixels, path, imgWidth);
-					while(!path.contains(newPxl)){
-						path.add(newPxl);
-						newPxl = findPath(pixels, path, imgWidth);
-					}
+					Path<Integer> path = findPath(pixels, pos, imgWidth);
 					paths.add(path);
-//					path.setType(true);
 					int[] invertedPixels = invertClosedRegion(pixels, path, imgWidth);
-					potrace(invertedPixels, imgWidth, imgHeight);
-
+					findPaths(invertedPixels, imgWidth, imgHeight, paths);
 					break outerloop;
 				}
 			}
 		}
 	}
 	
-	private static int findPath(int[] pixels, Path<Integer> path, int imgWidth){
+	private static Path<Integer> findPath(int[] pixels, int pos, int imgWidth){
+		Path<Integer> path = new Path<Integer>();
+		path.add(pos);
+		path.add(pos+imgWidth);
+		int newPxl = findNewPathPixel(pixels, path, imgWidth);
+		while(!path.contains(newPxl)){
+			path.add(newPxl);
+			newPxl = findNewPathPixel(pixels, path, imgWidth);
+		}
+//		path.setType(true);
+		return path;
+	}
+	
+	private static int findNewPathPixel(int[] pixels, Path<Integer> path, int imgWidth){
 		AbsoluteDirection origin = getOrigin(path, imgWidth);
 		int last = path.get(path.size()-1);
 		int[] LR = getPixelsToCompare(origin, imgWidth, last);
