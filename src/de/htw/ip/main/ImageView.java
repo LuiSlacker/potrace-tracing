@@ -3,22 +3,24 @@ package de.htw.ip.main;
 // All rights reserved.
 // Date: 2010-03-15
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.image.BufferedImage;
-import java.awt.Font;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.io.File;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
+import de.htw.ip.potrace.Path;
 
 
 public class ImageView extends JScrollPane{
@@ -142,6 +144,10 @@ public class ImageView extends JScrollPane{
 		return maxViewMagnification;
 	}
 	
+	public ImageScreen getScreen(){
+		return screen;
+	}
+	
 	// set 0.0 to disable limits
 	//
 	public void setMaxViewMagnification(double mag) {
@@ -234,10 +240,16 @@ public class ImageView extends JScrollPane{
 		private static final long serialVersionUID = 1L;
 		
 		private BufferedImage image = null;
+		private List<List<Integer>> paths = null;
 
 		public ImageScreen(BufferedImage bi) {
 			super();
 			image = bi;
+		}
+		
+		public void setPaths(List<List<Integer>> paths){
+			this.paths = paths;
+			this.revalidate();
 		}
 		
 		public void paintComponent(Graphics g) {
@@ -297,6 +309,31 @@ public class ImageView extends JScrollPane{
 					}
 					for (double y = 0; y < h; y+= zoom) {
 						g.drawLine(0+offsetX, (int)y+offsetY, w+offsetX, (int)y+offsetY);
+					}
+				}
+				if(this.paths != null){
+					Graphics2D g2 = (Graphics2D) g;
+					g2.setStroke(new BasicStroke(2));
+					for (int i = 0; i < paths.size(); i++) {
+						List<Integer> path = paths.get(i);
+						if( ((Path<Integer>)path).getType() ) {
+							g.setColor(SystemColor.RED);
+						} else g.setColor(SystemColor.GREEN); 
+						for (int j = 1; j < path.size(); j++) {
+							int current = path.get(j);
+							int currentX = current % (int)(image.getWidth());
+							int currentY = current / (int)(image.getWidth());
+							int penultimate = path.get(j-1);
+							int penultimateX = penultimate % image.getWidth();
+							int penultimateY = penultimate / image.getWidth();
+							g.drawLine(
+									(int)(penultimateX*zoom)+offsetX,
+									(int)(penultimateY*zoom)+offsetY,
+									(int)(currentX*zoom)+offsetX,
+									(int)(currentY*zoom)+offsetY);
+							
+						}
+						
 					}
 				}
 			}

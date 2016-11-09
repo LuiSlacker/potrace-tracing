@@ -15,7 +15,7 @@ public class Path<T> extends ArrayList<T>{
 	public Path(){
 	}
 
-	public boolean getType(boolean type) {
+	public boolean getType() {
 		return this.type;
 	}
 	

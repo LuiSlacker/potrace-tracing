@@ -9,20 +9,15 @@ public class ContourAlgorithm {
 	private final static int BLACK = 0xFF000000;
 	private final static int WHITE = 0xFFFFFFFF;
 	
-	public static void potrace(int[] pixels, int imgWidth, int imgHeight){
+	public static List<List<Integer>> potrace(int[] pixels, int imgWidth, int imgHeight){
 		List<List<Integer>> paths = new ArrayList<List<Integer>>();
 		findPaths(pixels, imgWidth, imgHeight, paths);
-		System.out.println(paths);
+		setType(pixels, paths);
 		for (int i = 0; i < paths.size();i++) {
 			System.out.println(paths.get(i));
-			
+			System.out.println(((Path<Integer>)paths.get(i)).getType());
 		}
-		
-		drawContours(pixels, paths);
-	}
-	
-	private static void drawContours(int[] pixels, List<List<Integer>> paths) {
-		
+		return paths;
 	}
 
 	private static void findPaths(int[] pixels, int imgWidth, int imgHeight, List<List<Integer>> paths){
@@ -41,6 +36,17 @@ public class ContourAlgorithm {
 		}
 	}
 	
+	private static void setType(int[] pixels, List<List<Integer>> paths) {
+		for (int i = 0; i < paths.size(); i++) {
+			Path<Integer> path = (Path<Integer>)paths.get(i);
+			if (pixels[path.get(0)] == BLACK){
+				path.setType(true);
+			} else {
+				path.setType(false); 
+			}
+		}
+	}
+
 	private static Path<Integer> findPath(int[] pixels, int pos, int imgWidth){
 		Path<Integer> path = new Path<Integer>();
 		path.add(pos);

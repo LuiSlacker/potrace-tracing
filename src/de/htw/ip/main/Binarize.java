@@ -13,6 +13,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -39,7 +40,7 @@ public class Binarize extends JPanel {
 	private static final File openPath = new File(".");
 	private static final String title = "Binarisierung";
 	private static final String author = "Goohsen";
-	private static final String initalOpen = "tools.png";
+	private static final String initalOpen = "ABC.png";
 	
 	private static JFrame frame;
 	
@@ -212,7 +213,8 @@ public class Binarize extends JPanel {
     	case 0:	// 50% Schwellwert
     		threshold = BasicAlgorithms.getIsoDataThreshold(dstPixels);
     		binarize(dstPixels, threshold);
-    		ContourAlgorithm.potrace(dstPixels, width, height);
+    		List<List<Integer>> paths = ContourAlgorithm.potrace(dstPixels, width, height);
+    		dstView.getScreen().setPaths(paths);
     		break;
 //    	case 1:	// ISO-Data-Algorithmus
 //    		thresholdSlider.setEnabled(false);
