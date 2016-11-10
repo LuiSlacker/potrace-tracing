@@ -40,7 +40,7 @@ public class Binarize extends JPanel {
 	private static final File openPath = new File(".");
 	private static final String title = "Binarisierung";
 	private static final String author = "Goohsen";
-	private static final String initalOpen = "ABC.png";
+	private static final String initalOpen = "sample.png";
 	
 	private static JFrame frame;
 	

@@ -52,11 +52,19 @@ public class ContourAlgorithm {
 		path.add(pos);
 		path.add(pos+imgWidth);
 		int newPxl = findNewPathPixel(pixels, path, imgWidth);
-		while(!path.contains(newPxl)){
+		boolean overlap = false;
+		while(true){
+			if(overlap){
+				if(path.contains(newPxl)){
+					break;
+				} else{
+					overlap = false;
+				}
+			}
+			if(path.contains(newPxl)) overlap = true;
 			path.add(newPxl);
 			newPxl = findNewPathPixel(pixels, path, imgWidth);
 		}
-//		path.setType(true);
 		return path;
 	}
 	
