@@ -48,7 +48,6 @@ public class Binarize extends JPanel {
 	private ImageView dstView;				// binarized image view
 	private int dstPixels[];
 	
-	private JComboBox<String> methodList;	// the selected binarization method
 	private JLabel statusLine;				// to print some status text
 	
 
@@ -81,23 +80,6 @@ public class Binarize extends JPanel {
         	}        	
         });
          
-        // selector for the binarization method
-        JLabel methodText = new JLabel("Methode:");
-//        String[] methodNames = {"Manueller Schwellwert", "Iso-Data-Algorithmus", "Regioning"};
-        String[] methodNames = {
-	        		"Depth First", "Depth First Optimized", "Breadt First", 
-	        		"Breadt First Optimized", "Sequential"
-        		};
-        
-        methodList = new JComboBox<String>(methodNames);
-        methodList.setSelectedIndex(0);		// set initial method
-        methodList.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-                binarizeImage();
-        	}
-        });
-        
-        
         // some status text
         statusLine = new JLabel(" ");
         
@@ -117,8 +99,6 @@ public class Binarize extends JPanel {
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(0,border,0,0);
         controls.add(load, c);
-        controls.add(methodText, c);
-        controls.add(methodList, c);
         controls.add(zoomSlider, c);
         
         JPanel images = new JPanel(new FlowLayout());
@@ -178,8 +158,6 @@ public class Binarize extends JPanel {
 	
     protected void binarizeImage() {
   
-        String methodName = (String)methodList.getSelectedItem();
-        
         // image dimensions
         int width = srcView.getImgWidth();
         int height = srcView.getImgHeight();
@@ -188,52 +166,19 @@ public class Binarize extends JPanel {
     	int srcPixels[] = srcView.getPixels();
     	dstPixels = java.util.Arrays.copyOf(srcPixels, srcPixels.length);
     	
-    	int threshold;
-    	
-//    	//TODO uncomment for Benchmark (and comment entire switch statement) --------
-//    	threshold = BasicAlgorithms.getIsoDataThreshold(dstPixels);
-//		binarize(dstPixels, threshold);
-//    	System.out.printf("Benchmark FloodFill Depth First: %s\n", RegioningBenchmark.benchmarkRegioningFloodFill(dstPixels, width, height, FloodFill.DEPTH_FIRST));
-//    	System.out.printf("Benchmark FloodFill Depth First Optimized: %s\n", RegioningBenchmark.benchmarkRegioningFloodFill(dstPixels, width, height, FloodFill.DEPTH_FIRST_OPTIMIZED));
-//    	System.out.printf("Benchmark FloodFill Breadth First: %s\n", RegioningBenchmark.benchmarkRegioningFloodFill(dstPixels, width, height, FloodFill.BREADTH_FIRST));
-//    	System.out.printf("Benchmark FloodFill Breadth First Optimized: %s\n", RegioningBenchmark.benchmarkRegioningFloodFill(dstPixels, width, height, FloodFill.BREADTH_FIRST_OPTIMIZED));
-//    	System.out.printf("Benchmark Sequential Regioning: %s\n\n", RegioningBenchmark.benchmarkSequentialRegioning(dstPixels, width, height));
-//    	// End Benchmark --------------------------------------------------------
-    	
-    	String message = "Binarisieren mit \"" + methodName + "\"";
-
-    	statusLine.setText(message);
-
 		long startTime = System.currentTimeMillis();
 		
-		threshold = BasicAlgorithms.getIsoDataThreshold(dstPixels);
-		binarize(dstPixels, threshold);
+		// potrace contour Algorithm
+		binarize(dstPixels, BasicAlgorithms.getIsoDataThreshold(dstPixels));
+		List<List<Integer>> paths = ContourAlgorithm.potrace(dstPixels, width, height);
+		dstView.getScreen().setPaths(paths);
 		
-    	switch(methodList.getSelectedIndex()) {
-    	case 0:	// 50% Schwellwert
-    		threshold = BasicAlgorithms.getIsoDataThreshold(dstPixels);
-    		binarize(dstPixels, threshold);
-    		List<List<Integer>> paths = ContourAlgorithm.potrace(dstPixels, width, height);
-    		dstView.getScreen().setPaths(paths);
-    		break;
-//    	case 1:	// ISO-Data-Algorithmus
-//    		thresholdSlider.setEnabled(false);
-//    		threshold = BasicAlgorithms.getIsoDataThreshold(dstPixels);
-//    		binarize(dstPixels, threshold);
-//    		thresholdSlider.setValue(threshold);
-//    		break;
-    	}
-   
-
 		long time = System.currentTimeMillis() - startTime;
 		   	
-        dstView.setPixels(dstPixels, width, height);
-        
-        //dstView.saveImage("out.png");
-    	
+		statusLine.setText("Kontourfindung mit potrace in " + time + " ms");
+		dstView.setPixels(dstPixels, width, height);
         frame.pack();
-        
-    	statusLine.setText(message + " in " + time + " ms");
+    	
     }
     
     void binarize(int pixels[], int threshold) {
