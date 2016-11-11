@@ -49,8 +49,6 @@ public class Binarize extends JPanel {
 	private int dstPixels[];
 	
 	private JLabel statusLine;				// to print some status text
-	
-
 
 	public Binarize() {
         super(new BorderLayout(border, border));
@@ -155,7 +153,6 @@ public class Binarize extends JPanel {
         });
 	}
 	
-	
     protected void binarizeImage() {
   
         // image dimensions
@@ -187,7 +184,6 @@ public class Binarize extends JPanel {
     		pixels[i] = gray < threshold ? 0xff000000 : 0xffffffff;
     	}
     }
-    
 
 }
     
