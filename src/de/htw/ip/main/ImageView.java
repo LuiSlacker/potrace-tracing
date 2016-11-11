@@ -247,9 +247,12 @@ public class ImageView extends JScrollPane{
 			image = bi;
 		}
 		
+		/**
+		 * Sets the contour path of all closed regions
+		 *
+		 */
 		public void setPaths(List<List<Integer>> paths){
 			this.paths = paths;
-			this.revalidate();
 		}
 		
 		public void paintComponent(Graphics g) {
@@ -278,6 +281,7 @@ public class ImageView extends JScrollPane{
 				
 				int offsetX = 0;
 				int offsetY = 0;
+				Graphics2D g2 = (Graphics2D) g;
 				
 				// set background for regions not covered by image
 				if(r.height < getBounds().height) {
@@ -302,7 +306,6 @@ public class ImageView extends JScrollPane{
 					int w = (int)(image.getWidth() * zoom);
 					int h = (int)(image.getHeight() * zoom);
 					g.setColor(SystemColor.lightGray);
-					Graphics2D g2 = (Graphics2D) g;
 					g2.setStroke(new BasicStroke(2));
 					for (double x = 0; x < w; x+= zoom) {
 						g.drawLine((int)x+offsetX, 0+offsetY, (int)x+offsetX, h+offsetY);
@@ -312,25 +315,22 @@ public class ImageView extends JScrollPane{
 					}
 				}
 				if(this.paths != null){
-					Graphics2D g2 = (Graphics2D) g;
 					g2.setStroke(new BasicStroke(2));
 					for (int i = 0; i < paths.size(); i++) {
-						List<Integer> path = paths.get(i);
-						if( ((Path<Integer>)path).getType() ) {
-							g.setColor(SystemColor.RED);
-						} else g.setColor(SystemColor.GREEN); 
+						Path<Integer> path = (Path<Integer>)paths.get(i);
+						g.setColor(path.getType() ? SystemColor.RED: SystemColor.GREEN); 
 						for (int j = 1; j < path.size(); j++) {
 							int current = path.get(j);
 							int currentX = current % (int)(image.getWidth());
 							int currentY = current / (int)(image.getWidth());
 							int penultimate = path.get(j-1);
-							int penultimateX = penultimate % image.getWidth();
-							int penultimateY = penultimate / image.getWidth();
+							int penultimateX = penultimate % (int)image.getWidth();
+							int penultimateY = penultimate / (int)image.getWidth();
 							g.drawLine(
-									(int)(penultimateX*zoom)+offsetX,
-									(int)(penultimateY*zoom)+offsetY,
-									(int)(currentX*zoom)+offsetX,
-									(int)(currentY*zoom)+offsetY);
+									(int)(penultimateX * zoom) + offsetX,
+									(int)(penultimateY * zoom) + offsetY,
+									(int)(currentX * zoom) + offsetX,
+									(int)(currentY * zoom) + offsetY);
 							
 						}
 						

@@ -17,7 +17,6 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -38,9 +37,9 @@ public class Binarize extends JPanel {
 	private static final int maxWidth = 400;
 	private static final int maxHeight = 400;
 	private static final File openPath = new File(".");
-	private static final String title = "Binarisierung";
+	private static final String title = "Potrace";
 	private static final String author = "Goohsen";
-	private static final String initalOpen = "sample.png";
+	private static final String initalOpen = "tools.png";
 	
 	private static JFrame frame;
 	
@@ -49,6 +48,7 @@ public class Binarize extends JPanel {
 	private int dstPixels[];
 	
 	private JLabel statusLine;				// to print some status text
+	private JLabel zoomLabel = new JLabel("Zoom:");
 
 	public Binarize() {
         super(new BorderLayout(border, border));
@@ -97,6 +97,7 @@ public class Binarize extends JPanel {
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(0,border,0,0);
         controls.add(load, c);
+        controls.add(zoomLabel, c);
         controls.add(zoomSlider, c);
         
         JPanel images = new JPanel(new FlowLayout());
@@ -175,7 +176,6 @@ public class Binarize extends JPanel {
 		statusLine.setText("Kontourfindung mit potrace in " + time + " ms");
 		dstView.setPixels(dstPixels, width, height);
         frame.pack();
-    	
     }
     
     void binarize(int pixels[], int threshold) {

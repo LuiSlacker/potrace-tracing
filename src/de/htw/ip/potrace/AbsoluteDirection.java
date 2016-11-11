@@ -10,6 +10,6 @@ public enum AbsoluteDirection {
 	}
 	
 	public AbsoluteDirection previous(){
-		return vals[((this.ordinal()-1) + vals.length) % vals.length];
+		return vals[(this.ordinal()-1 + vals.length) % vals.length];
 	}
 }

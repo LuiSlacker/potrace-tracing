@@ -13,42 +13,39 @@ public class ContourAlgorithm {
 		List<List<Integer>> paths = new ArrayList<List<Integer>>();
 		findPaths(pixels, imgWidth, imgHeight, paths);
 		setType(pixels, paths);
-		for (int i = 0; i < paths.size();i++) {
-			System.out.println(paths.get(i));
-			System.out.println(((Path<Integer>)paths.get(i)).getType());
-		}
 		return paths;
 	}
 
+	/**
+	 * Finds all closedRegions within the image and saves its path vertices
+	 *
+	 */
 	private static void findPaths(int[] pixels, int imgWidth, int imgHeight, List<List<Integer>> paths){
-		outerloop:
-		for (int h = 0; h < imgHeight; h++){
-			for (int w = 0; w < imgWidth; w++) {
-				int pos = h * imgWidth + w;
-				if (pixels[pos] == BLACK){
-					Path<Integer> path = findPath(pixels, pos, imgWidth);
-					paths.add(path);
-					int[] invertedPixels = invertClosedRegion(pixels, path, imgWidth);
-					findPaths(invertedPixels, imgWidth, imgHeight, paths);
-					break outerloop;
-				}
+		for (int i = 0; i < pixels.length; i++){
+			if (pixels[i] == BLACK){
+				Path<Integer> path = findPath(pixels, i, imgWidth);
+				paths.add(path);
+				int[] invertedPixels = invertClosedRegion(pixels, path, imgWidth);
+				findPaths(invertedPixels, imgWidth, imgHeight, paths);
+				break;
 			}
 		}
 	}
 	
+	/**
+	 * Sets the type of the contour [outer | inner] 
+	 */
 	private static void setType(int[] pixels, List<List<Integer>> paths) {
 		for (int i = 0; i < paths.size(); i++) {
 			Path<Integer> path = (Path<Integer>)paths.get(i);
-			if (pixels[path.get(0)] == BLACK){
-				path.setType(true);
-			} else {
-				path.setType(false); 
-			}
+			path.setType((pixels[path.get(0)] == BLACK) ? true: false);
 		}
 	}
 	
-	
-
+	/**
+	 * Finds and returns one contour
+	 *
+	 */
 	private static Path<Integer> findPath(int[] pixels, int pos, int imgWidth){
 		Path<Integer> path = new Path<Integer>();
 		path.add(pos);
@@ -57,11 +54,8 @@ public class ContourAlgorithm {
 		int overlap = Integer.MIN_VALUE;
 		while(true){
 			if(overlap != Integer.MIN_VALUE){
-				if(path.get(overlap+1) == newPxl){
-					break;
-				} else{
-					overlap = Integer.MIN_VALUE;
-				}
+				if(path.get(overlap+1) == newPxl) break;
+				else overlap = Integer.MIN_VALUE;
 			}
 			if(path.contains(newPxl)) overlap = path.indexOf(newPxl);
 			path.add(newPxl);
@@ -70,36 +64,47 @@ public class ContourAlgorithm {
 		return path;
 	}
 	
+	/**
+	 * Finds and returns the next pixel in the contour
+	 *
+	 */
 	private static int findNewPathPixel(int[] pixels, Path<Integer> path, int imgWidth){
-		AbsoluteDirection origin = getOrigin(path, imgWidth);
+		AbsoluteDirection origin = getAbsoluteOrigin(path, imgWidth);
 		int last = path.get(path.size()-1);
 		int[] LR = getPixelsToCompare(origin, imgWidth, last);
 		if(pixels[LR[1]] == BLACK){
-			// gehe rel. rechts
+			// go rel. right
 			return getNextPathPixel(origin, RelativeDirection.RIGHT, last, imgWidth);
-			
 		} else {
 			if(pixels[LR[0]] == BLACK){
-				// gehe rel. gerade
+				// go rel. straight
 				return getNextPathPixel(origin, RelativeDirection.STRAIGHT, last, imgWidth);
 			} else {
-				// gehe rel. links
+				// go rel. lefts
 				return getNextPathPixel(origin, RelativeDirection.LEFT, last, imgWidth);
 			}
 		}
 	}
 	
-	private static AbsoluteDirection getOrigin(Path<Integer> path, int imgWidth){
+	/**
+	 * Get the absolute direction of last step within the contour
+	 *
+	 */
+	private static AbsoluteDirection getAbsoluteOrigin(Path<Integer> path, int imgWidth){
+		AbsoluteDirection aD = null;
 		int last = path.get(path.size()-1);
-		AbsoluteDirection tmp = null;
 		int penultimate = path.get(path.size()-2);
-		if (last-penultimate == -imgWidth) tmp = AbsoluteDirection.TOP; 
-		if (last-penultimate == 1) tmp = AbsoluteDirection.RIGHT; 
-		if (last-penultimate == imgWidth) tmp = AbsoluteDirection.BOTTOM; 
-		if (last-penultimate == -1) tmp = AbsoluteDirection.LEFT; 
-		return tmp;
+		if (last-penultimate == -imgWidth) aD = AbsoluteDirection.TOP; 
+		if (last-penultimate == 1) aD = AbsoluteDirection.RIGHT; 
+		if (last-penultimate == imgWidth) aD = AbsoluteDirection.BOTTOM; 
+		if (last-penultimate == -1) aD = AbsoluteDirection.LEFT; 
+		return aD;
 	}
 	
+	/**
+	 * Returns the two pixels (Left and Right in relative direction) to compare
+	 * 
+	 */
 	private static int[] getPixelsToCompare(AbsoluteDirection d, int imgWidth, int pos){
 		int[] a = new int[2];
 		switch (d) {
@@ -119,12 +124,14 @@ public class ContourAlgorithm {
 			a[0] = pos-imgWidth;
 			a[1] = pos;
 			break;
-		default:
-			break;
 		}
 		return a;
 	}
 	
+	/**
+	 * Get the next Pixel based upon absolute and relative directions
+	 *
+	 */
 	private static int getNextPathPixel(AbsoluteDirection origin, RelativeDirection direction, int pos, int imgWidth){
 		AbsoluteDirection targetDirection = mapRelativeToAbsolutePosition(origin, direction);
 		int tmp = 0;
@@ -148,6 +155,10 @@ public class ContourAlgorithm {
 		return tmp;
 	}
 	
+	/**
+	 * Maps a relative to an absolute position
+	 *
+	 */
 	public static AbsoluteDirection mapRelativeToAbsolutePosition(AbsoluteDirection origin, RelativeDirection rD){
 		AbsoluteDirection aD = null;
 		switch (rD) {
@@ -166,6 +177,9 @@ public class ContourAlgorithm {
 		return aD;
 	}
 	
+	/**
+	 * Inverts an entire closed Region 
+	 */
 	private static int[] invertClosedRegion(int[] pixels, Path<Integer> path, int imgWidth){
 		int[] invertedPixels = Arrays.copyOf(pixels, pixels.length);
 		for (int i = 1; i < path.size(); i++) {
@@ -180,14 +194,16 @@ public class ContourAlgorithm {
 		return invertedPixels;
 	}
 	
+	/**
+	 * Inverts Pixels from a startPixel up until the end of the row of the image
+	 *
+	 */
 	private static void invertPixels(int[] invertedPixels, int start, int imgWidth){
 		int current = start;
 		while(current % imgWidth != 0){
-			invertedPixels[current] = (invertedPixels[current] == BLACK) ? WHITE:BLACK;
-//			System.out.print(invertedPixels[current]);
+			invertedPixels[current] = (invertedPixels[current] == BLACK) ? WHITE: BLACK;
 			current++;
 		}
-//		System.out.println("");
 	}
 
 }

@@ -1,8 +1,12 @@
-package de.htw.ip.potrace;
+package de.htw.ip.tests;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import de.htw.ip.potrace.AbsoluteDirection;
+import de.htw.ip.potrace.ContourAlgorithm;
+import de.htw.ip.potrace.RelativeDirection;
 
 public class HelperTests {
 

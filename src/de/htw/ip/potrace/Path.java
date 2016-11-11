@@ -4,9 +4,6 @@ import java.util.ArrayList;
 
 public class Path<T> extends ArrayList<T>{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	// true: outer contour, false: inner contour
