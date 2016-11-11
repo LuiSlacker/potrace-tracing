@@ -46,22 +46,24 @@ public class ContourAlgorithm {
 			}
 		}
 	}
+	
+	
 
 	private static Path<Integer> findPath(int[] pixels, int pos, int imgWidth){
 		Path<Integer> path = new Path<Integer>();
 		path.add(pos);
 		path.add(pos+imgWidth);
 		int newPxl = findNewPathPixel(pixels, path, imgWidth);
-		boolean overlap = false;
+		int overlap = Integer.MIN_VALUE;
 		while(true){
-			if(overlap){
-				if(path.contains(newPxl)){
+			if(overlap != Integer.MIN_VALUE){
+				if(path.get(overlap+1) == newPxl){
 					break;
 				} else{
-					overlap = false;
+					overlap = Integer.MIN_VALUE;
 				}
 			}
-			if(path.contains(newPxl)) overlap = true;
+			if(path.contains(newPxl)) overlap = path.indexOf(newPxl);
 			path.add(newPxl);
 			newPxl = findNewPathPixel(pixels, path, imgWidth);
 		}
