@@ -179,7 +179,7 @@ public class BasicAlgorithms {
 	 */
 	private static double[] generateProbabilities(int[] pixels){
 		double[] frequencies = new double[256];
-		double numPixels = (double)pixels.length;
+		double numPixels = pixels.length;
 		
 		for(int i = 0; i < pixels.length; i++) {
 			int gray = convertRGBtoGrayValue(pixels[i]);

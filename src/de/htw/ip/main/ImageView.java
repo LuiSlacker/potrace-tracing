@@ -255,6 +255,7 @@ public class ImageView extends JScrollPane{
 			this.paths = paths;
 		}
 		
+		@Override
 		public void paintComponent(Graphics g) {
 			
 			if (image != null) {
@@ -305,7 +306,7 @@ public class ImageView extends JScrollPane{
 				if (zoom > 4) {
 					int w = (int)(image.getWidth() * zoom);
 					int h = (int)(image.getHeight() * zoom);
-					g.setColor(SystemColor.lightGray);
+					g.setColor(Color.lightGray);
 					g2.setStroke(new BasicStroke(2));
 					for (double x = 0; x < w; x+= zoom) {
 						g.drawLine((int)x+offsetX, 0+offsetY, (int)x+offsetX, h+offsetY);
@@ -318,14 +319,14 @@ public class ImageView extends JScrollPane{
 					g2.setStroke(new BasicStroke(2));
 					for (int i = 0; i < paths.size(); i++) {
 						Path<Integer> path = (Path<Integer>)paths.get(i);
-						g.setColor(path.getType() ? SystemColor.RED: SystemColor.GREEN); 
+						g.setColor(path.getType() ? Color.RED: Color.GREEN); 
 						for (int j = 1; j < path.size(); j++) {
 							int current = path.get(j);
-							int currentX = current % (int)(image.getWidth());
-							int currentY = current / (int)(image.getWidth());
+							int currentX = current % (image.getWidth());
+							int currentY = current / (image.getWidth());
 							int penultimate = path.get(j-1);
-							int penultimateX = penultimate % (int)image.getWidth();
-							int penultimateY = penultimate / (int)image.getWidth();
+							int penultimateX = penultimate % image.getWidth();
+							int penultimateY = penultimate / image.getWidth();
 							g.drawLine(
 									(int)((penultimateX + offsetX) * zoom),
 									(int)((penultimateY + offsetY) * zoom),
@@ -339,6 +340,7 @@ public class ImageView extends JScrollPane{
 			}
 		}
 		
+		@Override
 		public Dimension getPreferredSize() {
 			if(image != null) 
 				return new Dimension((int) (zoom * image.getWidth()), (int) (zoom * image.getHeight()));
