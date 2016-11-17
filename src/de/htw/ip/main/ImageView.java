@@ -296,12 +296,12 @@ public class ImageView extends JScrollPane{
 		private static final long serialVersionUID = 1L;
 		
 		private BufferedImage image = null;
-		
+
 		public ImageScreen(BufferedImage bi) {
 			super();
 			image = bi;
 		}
-		
+
 		@Override
 		public void paintComponent(Graphics g) {
 			
