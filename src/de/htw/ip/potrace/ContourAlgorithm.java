@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import de.htw.ip.basics.AbsoluteDirection;
+import de.htw.ip.basics.Path;
+import de.htw.ip.basics.RelativeDirection;
+
 public class ContourAlgorithm {
 	
 	private final static int BLACK = 0xFF000000;

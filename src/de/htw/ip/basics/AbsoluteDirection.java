@@ -1,4 +1,4 @@
-package de.htw.ip.potrace;
+package de.htw.ip.basics;
 
 public enum AbsoluteDirection {
 	TOP, RIGHT, BOTTOM, LEFT;

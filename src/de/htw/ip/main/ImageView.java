@@ -20,7 +20,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
-import de.htw.ip.potrace.Path;
+import de.htw.ip.basics.Path;
 
 
 public class ImageView extends JScrollPane{
