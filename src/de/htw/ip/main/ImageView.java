@@ -327,10 +327,10 @@ public class ImageView extends JScrollPane{
 							int penultimateX = penultimate % (int)image.getWidth();
 							int penultimateY = penultimate / (int)image.getWidth();
 							g.drawLine(
-									(int)(penultimateX * zoom) + offsetX,
-									(int)(penultimateY * zoom) + offsetY,
-									(int)(currentX * zoom) + offsetX,
-									(int)(currentY * zoom) + offsetY);
+									(int)((penultimateX + offsetX) * zoom),
+									(int)((penultimateY + offsetY) * zoom),
+									(int)((currentX + offsetX) * zoom),
+									(int)((currentY + offsetY) * zoom));
 							
 						}
 						
@@ -341,7 +341,7 @@ public class ImageView extends JScrollPane{
 		
 		public Dimension getPreferredSize() {
 			if(image != null) 
-				return new Dimension((int) zoom * image.getWidth(), (int) zoom * image.getHeight());
+				return new Dimension((int) (zoom * image.getWidth()), (int) (zoom * image.getHeight()));
 			else
 				return new Dimension(100, 60);
 		}
