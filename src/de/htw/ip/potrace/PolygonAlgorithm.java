@@ -2,6 +2,10 @@ package de.htw.ip.potrace;
 
 public class PolygonAlgorithm {
 
+	public static boolean constraintsViolated(int[] a, int[] c0, int[] c1){
+		return vectorProduct(c0, a) < 0 || vectorProduct(c1, a) > 0;
+	}
+	
 	public static void updateConstraints(int[] a, int[] c0, int[] c1){
 		if (Math.abs(a[0]) > 1 || Math.abs(a[1]) > 1){
 			updateC0(a, c0);
