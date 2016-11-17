@@ -23,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -68,7 +69,8 @@ public class Binarize extends JPanel {
 		// load image button
         JButton load = new JButton("Bild öffnen");
         load.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
+        	@Override
+			public void actionPerformed(ActionEvent e) {
         		File input = openFile();
         		if(input != null) {
         			dstView.loadImage(input);
@@ -82,7 +84,7 @@ public class Binarize extends JPanel {
         statusLine = new JLabel(" ");
         
         final int sliderGranularity = 100;
-        JSlider zoomSlider = new JSlider(JSlider.HORIZONTAL, 1*sliderGranularity, 20*sliderGranularity, 1*sliderGranularity);
+        JSlider zoomSlider = new JSlider(SwingConstants.HORIZONTAL, 1*sliderGranularity, 20*sliderGranularity, 1*sliderGranularity);
         zoomSlider.addChangeListener(new ChangeListener() {
 			
 			@Override
@@ -147,7 +149,8 @@ public class Binarize extends JPanel {
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 createAndShowGUI();
             }
         });
