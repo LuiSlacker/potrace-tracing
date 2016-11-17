@@ -34,16 +34,15 @@ public class Binarize extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	private static final int border = 10;
-	private static final int maxWidth = 400;
-	private static final int maxHeight = 400;
+	private static final int maxWidth = 1000;
+	private static final int maxHeight = 600;
 	private static final File openPath = new File(".");
 	private static final String title = "Potrace";
-	private static final String author = "Goohsen";
+	private static final String author = "Goohsen-Sacker";
 	private static final String initalOpen = "tools.png";
 	
 	private static JFrame frame;
 	
-	private ImageView srcView;				// source image view
 	private ImageView dstView;				// binarized image view
 	private int dstPixels[];
 	
@@ -58,12 +57,13 @@ public class Binarize extends JPanel {
         
         if(!input.canRead()) input = openFile(); // file not found, choose another image
         
-        srcView = new ImageView(input);
-        srcView.setMaxSize(new Dimension(maxWidth, maxHeight));
+        // create an empty destination image
+        dstView = new ImageView(input);
+        dstView.setMaxSize(new Dimension(maxWidth, maxHeight));
        
 		// create an empty destination image
-		dstView = new ImageView(srcView.getImgWidth(), srcView.getImgHeight());
-		dstView.setMaxSize(new Dimension(maxWidth, maxHeight));
+
+
 		
 		// load image button
         JButton load = new JButton("Bild öffnen");
@@ -71,8 +71,8 @@ public class Binarize extends JPanel {
         	public void actionPerformed(ActionEvent e) {
         		File input = openFile();
         		if(input != null) {
-	        		srcView.loadImage(input);
-	        		srcView.setMaxSize(new Dimension(maxWidth, maxHeight));
+        			dstView.loadImage(input);
+        			dstView.setMaxSize(new Dimension(maxWidth, maxHeight));
 	                binarizeImage();
         		}
         	}        	
@@ -101,7 +101,6 @@ public class Binarize extends JPanel {
         controls.add(zoomSlider, c);
         
         JPanel images = new JPanel(new FlowLayout());
-        images.add(srcView);
         images.add(dstView);
         
         add(controls, BorderLayout.NORTH);
@@ -157,12 +156,11 @@ public class Binarize extends JPanel {
     protected void binarizeImage() {
   
         // image dimensions
-        int width = srcView.getImgWidth();
-        int height = srcView.getImgHeight();
+        int width = dstView.getImgWidth();
+        int height = dstView.getImgHeight();
     	
     	// get pixels arrays
-    	int srcPixels[] = srcView.getPixels();
-    	dstPixels = java.util.Arrays.copyOf(srcPixels, srcPixels.length);
+    	dstPixels = dstView.getPixels();
     	
 		long startTime = System.currentTimeMillis();
 		
