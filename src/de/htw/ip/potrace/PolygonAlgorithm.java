@@ -6,28 +6,39 @@ import java.util.List;
 
 public class PolygonAlgorithm {
 	
-	public static void optimizedPolygons(List<List<Point>> contours, int imgWidth){
+	public static List<List<Point>> optimizedPolygons(List<List<Point>> contours, int imgWidth){
+		List<List<Point>> polygons = new ArrayList<List<Point>>();
 		for (List<Point> contour : contours) {
-			optimizedPolygon(contour);
+			polygons.add(optimizedPolygon(contour));
 		}
+		return polygons;
 	}
 	
-	private static void optimizedPolygon(List<Point> contour) {
+	private static List<Point> optimizedPolygon(List<Point> contour) {
+		List<List<Point>> possibles = possiblePolygons(contour);
+		// check for shortest possible polygon
+		return null;
+	}
+
+	private static List<List<Point>> possiblePolygons(List<Point> contour) {
+		List<List<Point>> possibles = new ArrayList<List<Point>>();
+		List<List<Point>> pivots = pivotPolygons(contour);
+		// generate possibles
+		return possibles;
+		
+	}
+
+	private static List<List<Point>> pivotPolygons(List<Point> contour) {
 		List<List<Point>> pivots = new ArrayList<List<Point>>();
 		for (Point vertex : contour) {
-			pivots.add(maxStraightPath(contour, vertex));
+			pivots.add(straightPathPolygon(contour, vertex));
 		}
+		return pivots;
 	}
 
-	public static void allStraightPathPolygons(List<Point> contour){
-		for (Point vertex : contour) {
-			straightPathPolygon(contour, vertex);
-		}
-	}
-
-	public static void straightPathPolygon(List<Point> contour, Point vertex) {
-		
-		
+	public static List<Point> straightPathPolygon(List<Point> contour, Point vertex) {
+		maxStraightPath(contour, vertex);
+		return null;
 	}
 
 	public static List<Point> maxStraightPath(List<Point> contour, Point vertex){
