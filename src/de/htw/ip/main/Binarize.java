@@ -9,10 +9,12 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -29,7 +31,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.htw.ip.basics.BasicAlgorithms;
+import de.htw.ip.basics.Path;
 import de.htw.ip.potrace.ContourAlgorithm;
+import de.htw.ip.potrace.PolygonAlgorithm;
 
 public class Binarize extends JPanel {
 	
@@ -169,7 +173,16 @@ public class Binarize extends JPanel {
 		
 		// potrace contour Algorithm
 		binarize(dstPixels, BasicAlgorithms.getIsoDataThreshold(dstPixels));
-		List<List<Integer>> paths = ContourAlgorithm.potrace(dstPixels, width, height);
+		List<List<Integer>> paths = ContourAlgorithm.contours(dstPixels, width, height);
+		List<List<Point>> contours = new ArrayList<List<Point>>();
+		for (List<Integer> path : paths) {
+			Path<Point> contour = new Path<Point>();
+			for (Integer vertex : path) {
+				contour.add(new Point(vertex % width, vertex / width));
+			}
+			contours.add(contour);
+		}
+		PolygonAlgorithm.optimizedPolygons(contours, width);
 		dstView.getScreen().setPaths(paths);
 		
 		long time = System.currentTimeMillis() - startTime;

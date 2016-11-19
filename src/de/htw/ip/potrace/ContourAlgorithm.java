@@ -13,7 +13,7 @@ public class ContourAlgorithm {
 	private final static int BLACK = 0xFF000000;
 	private final static int WHITE = 0xFFFFFFFF;
 	
-	public static List<List<Integer>> potrace(int[] pixels, int imgWidth, int imgHeight){
+	public static List<List<Integer>> contours(int[] pixels, int imgWidth, int imgHeight){
 		List<List<Integer>> paths = new ArrayList<List<Integer>>();
 		findPaths(pixels, imgWidth, imgHeight, paths);
 		setType(pixels, paths);
