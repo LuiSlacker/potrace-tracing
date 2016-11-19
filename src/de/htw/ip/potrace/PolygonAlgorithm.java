@@ -86,7 +86,6 @@ public class PolygonAlgorithm {
 			possibles[i] = ((pivots[((i-1 + pivots.length) % pivots.length)] - 1) + pivots.length) % pivots.length;
 		}
 		return possibles;
-		
 	}
 
 	private static int[] pivots(List<Point> contour) {
