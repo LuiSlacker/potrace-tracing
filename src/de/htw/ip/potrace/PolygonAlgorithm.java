@@ -2,6 +2,7 @@ package de.htw.ip.potrace;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PolygonAlgorithm {
@@ -55,14 +56,15 @@ public class PolygonAlgorithm {
 			Point vertex2Check = contour.get((index+1) % contour.size());
 			//checkDirections break
 			// calculate new vector
+			Point vector = new Point(vertex2Check.x-vertex.x, vertex2Check.y-vertex.y);
 			if (vertex2Check.x == startVertex.x && vertex2Check.y == startVertex.y) break;
-			if (constraintsViolated(vertex2Check, c0,c1)) {
+			if (constraintsViolated(vector, c0,c1)) {
 				break;
 			}
 			updateConstraints(vertex2Check, c0,c1);
 			index++;
 		}
-		return contour.get(index+1);
+		return contour.get((index+1) % contour.size()); //TODO REALLLYYYY index +1 ???????????
 	}
 	
 	private static boolean constraintsViolated(Point a, Point c0, Point c1){
