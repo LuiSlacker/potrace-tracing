@@ -15,12 +15,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.SynchronousQueue;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -46,7 +45,7 @@ public class Binarize extends JPanel {
 	private static final File openPath = new File(".");
 	private static final String title = "Potrace";
 	private static final String author = "Goohsen-Sacker";
-	private static final String initalOpen = "klein.png";
+	private static final String initalOpen = "tools.png";
 	
 	private static JFrame frame;
 	
@@ -100,6 +99,33 @@ public class Binarize extends JPanel {
 			}
 		});
         
+        JCheckBox vertices = new JCheckBox("Vertices");
+        vertices.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dstView.setShowVertices(vertices.isSelected() ? true: false);
+			}
+		});
+        
+        JCheckBox polygons = new JCheckBox("Polygons");
+        polygons.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dstView.setShowPolygons(polygons.isSelected()? true: false);
+			}
+		});
+        
+        JCheckBox paths = new JCheckBox("Path");
+        paths.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dstView.setShowPaths(paths.isSelected()? true: false);
+			}
+		});
+        
         // arrange all controls
         JPanel controls = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -111,9 +137,15 @@ public class Binarize extends JPanel {
         JPanel images = new JPanel(new FlowLayout());
         images.add(dstView);
         
+        JPanel controlsBottom = new JPanel(new GridBagLayout());
+        controlsBottom.add(paths, c);
+        controlsBottom.add(polygons, c);
+        controlsBottom.add(vertices, c);
+        
         add(controls, BorderLayout.NORTH);
         add(images, BorderLayout.CENTER);
-        add(statusLine, BorderLayout.SOUTH);
+        add(controlsBottom, BorderLayout.SOUTH);
+        //add(statusLine, BorderLayout.SOUTH);
                
         setBorder(BorderFactory.createEmptyBorder(border,border,border,border));
         
@@ -186,8 +218,10 @@ public class Binarize extends JPanel {
 		}
 		contours.forEach(s -> System.out.println(s));
 		
-		PolygonAlgorithm.optimizedPolygons(contours, width);
+		List<List<Point>> polygons = PolygonAlgorithm.optimizedPolygons(contours, width);
+		
 		dstView.getScreen().setPaths(paths);
+		dstView.getScreen().setPolygons(polygons);
 		
 		long time = System.currentTimeMillis() - startTime;
 		   	

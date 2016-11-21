@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.image.BufferedImage;
@@ -34,6 +35,7 @@ public class ImageView extends JScrollPane{
 	private double maxViewMagnification = 0.0;		// use 0.0 to disable limits 
 	private boolean keepAspectRatio = true;
 	private boolean centered = true;
+	private boolean showPaths, showVertices, showPolygons;
 	
 	int pixels[] = null;		// pixel array in ARGB format
 	private double zoom = 1.0;
@@ -45,6 +47,24 @@ public class ImageView extends JScrollPane{
 	public void setZoom(double zoom) {
 		this.zoom = zoom;
 		screen.revalidate();
+	}
+	
+	public void setShowPolygons(boolean showPolygons) {
+		this.showPolygons = showPolygons;
+		screen.invalidate();
+		screen.repaint();
+	}
+	
+	public void setShowVertices(boolean showVertices) {
+		this.showVertices = showVertices;
+		screen.invalidate();
+		screen.repaint();
+	}
+	
+	public void setShowPaths(boolean showPaths) {
+		this.showPaths = showPaths;
+		screen.invalidate();
+		screen.repaint();
 	}
 
 	public ImageView(int width, int height) {
@@ -241,7 +261,8 @@ public class ImageView extends JScrollPane{
 		
 		private BufferedImage image = null;
 		private List<List<Integer>> paths = null;
-
+		private List<List<Point>> polygons = null;
+		
 		public ImageScreen(BufferedImage bi) {
 			super();
 			image = bi;
@@ -253,6 +274,10 @@ public class ImageView extends JScrollPane{
 		 */
 		public void setPaths(List<List<Integer>> paths){
 			this.paths = paths;
+		}
+		
+		public void setPolygons(List<List<Point>> polygons) {
+			this.polygons = polygons;
 		}
 		
 		@Override
@@ -315,7 +340,9 @@ public class ImageView extends JScrollPane{
 						g.drawLine(0+offsetX, (int)y+offsetY, w+offsetX, (int)y+offsetY);
 					}
 				}
-				if(this.paths != null){
+				
+				// draw Path Outlines
+				if(this.paths != null && showPaths) {
 					g2.setStroke(new BasicStroke(2));
 					for (int i = 0; i < paths.size(); i++) {
 						Path<Integer> path = (Path<Integer>)paths.get(i);
@@ -332,9 +359,41 @@ public class ImageView extends JScrollPane{
 									(int)((penultimateY + offsetY) * zoom),
 									(int)((currentX + offsetX) * zoom),
 									(int)((currentY + offsetY) * zoom));
-							
 						}
 						
+					}
+				}
+				
+				// draw Polygons
+				if (this.polygons != null && showPolygons) {
+					g2.setStroke(new BasicStroke(2));
+					g.setColor(Color.MAGENTA);
+					for (List<Point> polygon : this.polygons) {
+						for (int i = 1; i < polygon.size(); i++) {
+							Point current = polygon.get(i);
+							Point penultimate = polygon.get(i-1);
+							g.drawLine(
+									(int)((penultimate.x + offsetX) * zoom),
+									(int)((penultimate.y + offsetY) * zoom),
+									(int)((current.x + offsetX) * zoom),
+									(int)((current.y + offsetY) * zoom));
+						}
+					}
+				}
+				
+				// draw vertices
+				if (this.polygons != null && showVertices) {
+					g2.setStroke(new BasicStroke(2));
+					g.setColor(Color.BLUE);
+					for (List<Point> polygon : this.polygons) {
+						for (int i = 1; i < polygon.size(); i++) {
+							Point current = polygon.get(i);
+							drawCenteredCircle(
+									g2,
+									(int)((current.x + offsetX) * zoom), 
+									(int)((current.y + offsetY) * zoom), 
+									5);
+						}
 					}
 				}
 			}
@@ -347,6 +406,12 @@ public class ImageView extends JScrollPane{
 			else
 				return new Dimension(100, 60);
 		}
+		
+		public void drawCenteredCircle(Graphics2D g, int x, int y, int r) {
+			  x = x-(r/2);
+			  y = y-(r/2);
+			  g.fillOval(x,y,r,r);
+			}
 	}
 
 }
