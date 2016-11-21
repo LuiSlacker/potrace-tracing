@@ -15,7 +15,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.SynchronousQueue;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -44,7 +46,7 @@ public class Binarize extends JPanel {
 	private static final File openPath = new File(".");
 	private static final String title = "Potrace";
 	private static final String author = "Goohsen-Sacker";
-	private static final String initalOpen = "tools.png";
+	private static final String initalOpen = "klein.png";
 	
 	private static JFrame frame;
 	
@@ -182,6 +184,8 @@ public class Binarize extends JPanel {
 			}
 			contours.add(contour);
 		}
+		contours.forEach(s -> System.out.println(s));
+		
 		PolygonAlgorithm.optimizedPolygons(contours, width);
 		dstView.getScreen().setPaths(paths);
 		

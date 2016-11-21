@@ -24,6 +24,7 @@ public class PolygonAlgorithm {
 	private static List<List<Point>> possiblePolygons(List<Point> contour) {
 		List<List<Point>> possibles = new ArrayList<List<Point>>();
 		List<List<Point>> pivots = pivotPolygons(contour);
+		pivots.forEach(s -> System.out.println(s));
 		// generate possibles
 		return possibles;
 		
@@ -61,7 +62,7 @@ public class PolygonAlgorithm {
 			if (constraintsViolated(vector, c0,c1)) {
 				break;
 			}
-			updateConstraints(vertex2Check, c0,c1);
+			updateConstraints(vector, c0,c1);
 			index++;
 		}
 		return contour.get((index+1) % contour.size()); //TODO REALLLYYYY index +1 ???????????
@@ -82,14 +83,22 @@ public class PolygonAlgorithm {
 		Point d = new Point();
 		d.x = (a.y >= 0 && (a.y > 0 || a.x < 0)) ? a.x+1: a.x-1;  
 		d.y = (a.x <= 0 && (a.x < 0 || a.y < 0)) ? a.y+1: a.y-1;
-		c0 = vectorProduct(c0, d) >= 0 ? d: c0;
+//		c0 = vectorProduct(c0, d) >= 0 ? d: c0;
+		if (vectorProduct(c0, d) >= 0) {
+			c0.x = d.x;
+			c0.y = d.y;
+		}
 	}
 	
 	private static void updateC1(Point a, Point c1){
 		Point d = new Point();
 		d.x = (a.y <= 0 && (a.y < 0 || a.x < 0)) ? a.x+1: a.x-1;  
 		d.y = (a.x >= 0 && (a.x > 0 || a.y < 0)) ? a.y+1: a.y-1;
-		c1 = vectorProduct(c1, d) <= 0 ? d: c1;
+//		c1 = vectorProduct(c1, d) <= 0 ? d: c1;
+		if (vectorProduct(c1, d) <= 0) {
+			c1.x = d.x;
+			c1.y = d.y;
+		}
 	}
 	
 	private static int vectorProduct(Point a, Point b){
