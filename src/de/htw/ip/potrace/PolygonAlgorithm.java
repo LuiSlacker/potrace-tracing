@@ -73,7 +73,6 @@ public class PolygonAlgorithm {
 
 	private static boolean cyclicDiffViolated(int i, int j, int n){
 		return cyclicDiff(i, j, n-1) > (n-1-3);
-		
 	}
 	
 	private static int cyclicDiff(int i, int j, int n){
