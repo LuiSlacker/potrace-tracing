@@ -44,7 +44,7 @@ public class PolygonAlgorithm {
 		do{
 			newVertex = maxStraightPath(contour, newVertex, startVertex);
 			pivot.add(newVertex);
-		} while(!(newVertex.x == startVertex.x && newVertex.y == startVertex.y));
+		} while(!(newVertex.equals(startVertex)));
 		return pivot;
 	}
 
@@ -58,7 +58,7 @@ public class PolygonAlgorithm {
 			//checkDirections break
 			// calculate new vector
 			Point vector = new Point(vertex2Check.x-vertex.x, vertex2Check.y-vertex.y);
-			if (vertex2Check.x == startVertex.x && vertex2Check.y == startVertex.y) break;
+			if (vertex2Check.equals(startVertex)) break;
 			if (constraintsViolated(vector, c0,c1)) {
 				break;
 			}
@@ -83,7 +83,6 @@ public class PolygonAlgorithm {
 		Point d = new Point();
 		d.x = (a.y >= 0 && (a.y > 0 || a.x < 0)) ? a.x+1: a.x-1;  
 		d.y = (a.x <= 0 && (a.x < 0 || a.y < 0)) ? a.y+1: a.y-1;
-//		c0 = vectorProduct(c0, d) >= 0 ? d: c0;
 		if (vectorProduct(c0, d) >= 0) {
 			c0.x = d.x;
 			c0.y = d.y;
@@ -94,7 +93,6 @@ public class PolygonAlgorithm {
 		Point d = new Point();
 		d.x = (a.y <= 0 && (a.y < 0 || a.x < 0)) ? a.x+1: a.x-1;  
 		d.y = (a.x >= 0 && (a.x > 0 || a.y < 0)) ? a.y+1: a.y-1;
-//		c1 = vectorProduct(c1, d) <= 0 ? d: c1;
 		if (vectorProduct(c1, d) <= 0) {
 			c1.x = d.x;
 			c1.y = d.y;
