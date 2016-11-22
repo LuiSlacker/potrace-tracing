@@ -1,3 +1,3 @@
 # potrace-tracing
 
-Java implementation to vectorise raster images (.bmp --> .svg)
+Java implementation to vectorize raster images (.bmp --> .svg)
