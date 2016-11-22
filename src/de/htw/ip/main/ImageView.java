@@ -36,6 +36,7 @@ public class ImageView extends JScrollPane{
 	private boolean keepAspectRatio = true;
 	private boolean centered = true;
 	private boolean showPaths, showVertices, showPolygons;
+	private boolean showPxls = true;
 	
 	int pixels[] = null;		// pixel array in ARGB format
 	private double zoom = 1.0;
@@ -65,6 +66,13 @@ public class ImageView extends JScrollPane{
 		this.showPaths = showPaths;
 		screen.invalidate();
 		screen.repaint();
+	}
+	
+	public void setShowPixels(boolean showPxls) {
+		this.showPxls = showPxls;
+		screen.invalidate();
+		screen.repaint();
+		
 	}
 
 	public ImageView(int width, int height) {
@@ -325,7 +333,9 @@ public class ImageView extends JScrollPane{
 				}
 				
 				// draw image
-				g.drawImage(image, offsetX, offsetY, r.width, r.height, this);
+				if (showPxls) {
+					g.drawImage(image, offsetX, offsetY, r.width, r.height, this);
+				}
 
 				// draw grid
 				if (zoom > 4) {

@@ -126,6 +126,16 @@ public class Binarize extends JPanel {
 			}
 		});
         
+        JCheckBox pxls = new JCheckBox("Pixels");
+        pxls.setSelected(true);
+        pxls.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dstView.setShowPixels(pxls.isSelected()? true: false);
+			}
+		});
+        
         // arrange all controls
         JPanel controls = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -138,6 +148,7 @@ public class Binarize extends JPanel {
         images.add(dstView);
         
         JPanel controlsBottom = new JPanel(new GridBagLayout());
+        controlsBottom.add(pxls, c);
         controlsBottom.add(paths, c);
         controlsBottom.add(polygons, c);
         controlsBottom.add(vertices, c);
