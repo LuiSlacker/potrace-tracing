@@ -45,7 +45,7 @@ public class Binarize extends JPanel {
 	private static final File openPath = new File(".");
 	private static final String title = "Potrace";
 	private static final String author = "Goohsen-Sacker";
-	private static final String initalOpen = "tools.png";
+	private static final String initalOpen = "./images/tools.png";
 	
 	private static JFrame frame;
 	
