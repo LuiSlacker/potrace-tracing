@@ -2,7 +2,11 @@ package de.htw.ip.potrace;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import de.htw.ip.basics.AbsoluteDirection;
 
 public class PolygonAlgorithm {
 	
@@ -52,12 +56,20 @@ public class PolygonAlgorithm {
 	public static Point maxStraightPath(List<Point> contour, Point vertex, Point startVertex){
 		Point c0 = new Point(0,0);
 		Point c1 = new Point(0,0);
+		Set<AbsoluteDirection> directions = new HashSet<AbsoluteDirection>();
 		
 		int index = contour.indexOf(vertex);
 		while (true) {
 			Point vertex2Check = contour.get((index+1) % contour.size());
-			//checkDirections break
-			// calculate new vector
+			
+			Point previousVertex = contour.get((index) % contour.size());
+			AbsoluteDirection a = getDirections(previousVertex, vertex);
+			if(!directions.contains(a)){
+				directions.add(a);
+			}
+			if (directions.size()>3) break; //checkDirections break
+			
+//			calculate new vector
 			Point vector = new Point(vertex2Check.x-vertex.x, vertex2Check.y-vertex.y);
 			if (vertex2Check.equals(startVertex)) break;
 			if (constraintsViolated(vector, c0, c1)) break;
@@ -65,6 +77,22 @@ public class PolygonAlgorithm {
 			index++;
 		}
 		return contour.get((index+1) % contour.size()); //TODO REALLLYYYY index +1 ???????????
+	}
+	
+	public static AbsoluteDirection getDirections(Point p1, Point p2){
+		int gapY = p1.y - p2.y;
+		int gapX = p1.x - p2.x;
+		
+		if(gapY == 1){
+			return AbsoluteDirection.TOP;
+		}else if(gapY == -1){
+			return AbsoluteDirection.BOTTOM;
+		}else if(gapX == 1){
+			return AbsoluteDirection.LEFT;
+		}else{
+			//if(gapX == -1){
+			return AbsoluteDirection.RIGHT;
+		}
 	}
 	
 	private static boolean constraintsViolated(Point a, Point c0, Point c1){
