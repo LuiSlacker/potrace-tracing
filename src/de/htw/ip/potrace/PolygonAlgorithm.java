@@ -63,10 +63,7 @@ public class PolygonAlgorithm {
 			Point vertex2Check = contour.get((index+1) % contour.size());
 			
 			Point previousVertex = contour.get((index) % contour.size());
-			AbsoluteDirection a = getDirections(previousVertex, vertex);
-			if(!directions.contains(a)){
-				directions.add(a);
-			}
+			directions.add(getDirections(previousVertex, vertex));
 			if (directions.size()>3) break; //checkDirections break
 			
 //			calculate new vector
@@ -90,7 +87,6 @@ public class PolygonAlgorithm {
 		}else if(gapX == 1){
 			return AbsoluteDirection.LEFT;
 		}else{
-			//if(gapX == -1){
 			return AbsoluteDirection.RIGHT;
 		}
 	}
