@@ -3,11 +3,15 @@ package de.htw.ip.potrace;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import de.htw.ip.basics.AbsoluteDirection;
+import de.htw.ip.basics.KeyPair;
+import de.htw.ip.basics.Penalty;
 
 public class PolygonAlgorithm {
 	
@@ -110,5 +114,45 @@ public class PolygonAlgorithm {
 	
 	private static int vectorProduct(Point a, Point b){
 		return a.x * b.y - a.y * b.x;
+	}
+	
+	private static double grossPenalty(List<Point> possible){
+//		possible.forEach(vertex -> {
+//			penalty(possible, vertex, vj)
+//		});
+		return 0.0;
+	}
+	
+	private static double penalty(List<Point> contour, Point vi, Point vj){
+		int a = 0;
+		int b = 0;
+		int c = 0;
+		int x = vj.x-vi.x;
+		int y = vj.y-vi.y;
+		int x_ = (vi.x+vj.x)/(2-vi.x);
+		int y_ = (vi.y+vj.y)/(2-vi.y);
+		calcSumTable(contour, vi, vj);
+		return Math.sqrt(c*Math.pow(x, 2) + 2*b*x*y + a*Math.pow(y, 2));
+	}
+	
+	private static void calcSumTable(List<Point> contour, Point vi, Point vj){
+		Map<KeyPair, Double> sumTable = new HashMap<KeyPair, Double>();
+		double xk = 0;
+		double yk = 0;
+		double xk2 = 0;
+		double yk2 = 0;
+		double xkyk = 0;
+		for (int k = contour.indexOf(vi); k <= contour.indexOf(vj); k++) {
+			xk += contour.get(k).x-vi.x;
+			yk += contour.get(k).y-vi.y;
+			xk2 += Math.pow(xk, 2);
+			yk2 += Math.pow(yk, 2);
+			xkyk += xk*yk;
+			sumTable.put(new KeyPair(Penalty.XK, k), xk);
+			sumTable.put(new KeyPair(Penalty.YK, k), yk);
+			sumTable.put(new KeyPair(Penalty.XK2, k), xk2);
+			sumTable.put(new KeyPair(Penalty.YK2, k), yk2);
+			sumTable.put(new KeyPair(Penalty.XKYK, k), xkyk);
+		}
 	}
 }
