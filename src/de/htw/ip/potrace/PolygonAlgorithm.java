@@ -2,6 +2,7 @@ package de.htw.ip.potrace;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,9 +20,7 @@ public class PolygonAlgorithm {
 	}
 	
 	private static List<Point> optimizedPolygon(List<Point> contour) {
-		List<List<Point>> possibles = possiblePolygons(contour);
-		// check for shortest possible polygon
-		return possibles.get(0);
+		return possiblePolygons(contour).stream().min(Comparator.comparing(List<Point>::size)).get();
 	}
 
 	private static List<List<Point>> possiblePolygons(List<Point> contour) {
@@ -35,10 +34,10 @@ public class PolygonAlgorithm {
 
 	private static List<List<Point>> pivotPolygons(List<Point> contour) {
 		List<List<Point>> pivots = new ArrayList<List<Point>>();
-//		for (Point vertex : contour) {
-//			pivots.add(straightPathPolygon(contour, vertex));
-//		}
-		pivots.add(straightPathPolygon(contour, contour.get(0)));
+		for (Point vertex : contour) {
+			pivots.add(straightPathPolygon(contour, vertex));
+		}
+//		pivots.add(straightPathPolygon(contour, contour.get(0)));
 		return pivots;
 	}
 
@@ -61,14 +60,13 @@ public class PolygonAlgorithm {
 		int index = contour.indexOf(vertex);
 		while (true) {
 			Point vertex2Check = contour.get((index+1) % contour.size());
+			if (vertex2Check.equals(startVertex)) break;
 			
 			Point previousVertex = contour.get((index) % contour.size());
 			directions.add(getDirections(previousVertex, vertex));
-			if (directions.size()>3) break; //checkDirections break
+			if (directions.size() > 3) break;
 			
-//			calculate new vector
 			Point vector = new Point(vertex2Check.x-vertex.x, vertex2Check.y-vertex.y);
-			if (vertex2Check.equals(startVertex)) break;
 			if (constraintsViolated(vector, c0, c1)) break;
 			updateConstraints(vector, c0,c1);
 			index++;
