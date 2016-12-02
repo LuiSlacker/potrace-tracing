@@ -2,17 +2,12 @@ package de.htw.ip.potrace;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import de.htw.ip.basics.AbsoluteDirection;
-import de.htw.ip.basics.KeyPair;
-import de.htw.ip.basics.Penalty;
 
 public class PolygonAlgorithm {
 	
@@ -62,7 +57,6 @@ public class PolygonAlgorithm {
 			pointerStep1 = getNextPossibleIndex(possibles, pointerStep1);
 			pointerStep2 = getSecondNextPossibleIndex(possibles, pointerStep2); 
 		}
-		polygon.add(contour.get(startIndex));
 		return polygon;
 	}
 	
@@ -84,8 +78,8 @@ public class PolygonAlgorithm {
 	}
 
 	private static int[] pivots(List<Point> contour) {
-		int[] pivots = new int[contour.size()-1];
-		for (int i = 0; i < contour.size()-1;i++) {
+		int[] pivots = new int[contour.size()];
+		for (int i = 0; i < contour.size();i++) {
 			pivots[i] = maxStraightPath(contour, contour.get(i));
 		}
 		return pivots;
@@ -97,9 +91,9 @@ public class PolygonAlgorithm {
 		Set<AbsoluteDirection> directions = new HashSet<AbsoluteDirection>();
 		int index = contour.indexOf(vertex);
 		while (true) {
-			Point vertex2Check = contour.get((index+1) % (contour.size()-1));
-			Point previousVertex = contour.get((index) % (contour.size()-1));
-			directions.add(getDirections(previousVertex, vertex2Check));
+			Point currentVertex = contour.get((index) % contour.size());
+			Point vertex2Check = contour.get((index+1) % contour.size());
+			directions.add(getDirections(currentVertex, vertex2Check));
 			if (directions.size() > 3) break;
 			
 			Point vector = new Point(vertex2Check.x-vertex.x, vertex2Check.y-vertex.y);
@@ -107,7 +101,7 @@ public class PolygonAlgorithm {
 			updateConstraints(vector, c0,c1);
 			index++;
 		}
-		return index % (contour.size()-1);
+		return index % contour.size();
 	}
 	
 	private static AbsoluteDirection getDirections(Point p1, Point p2){
