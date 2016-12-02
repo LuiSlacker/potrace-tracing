@@ -19,54 +19,75 @@ public class PolygonAlgorithm {
 	public static List<List<Point>> optimizedPolygons(List<List<Point>> contours, int imgWidth) {
 		List<List<Point>> polygons = new ArrayList<List<Point>>();
 		contours.forEach(contour -> polygons.add(optimizedPolygon(contour)));
-//		polygons.add(optimizedPolygon(contours.get(3)));
 		return polygons;
 	}
 	
+	/**
+	 * calculates an optimal polygon for one contour within following steps
+	 * 
+	 *   1. calculate pivot segments of length n
+	 *   2. calculate possible segments from pivots
+	 *   3. build n enclosed polygons out of possible segments starting from each vertex
+	 *   4. return the polygon with fewest segments
+	 */
 	private static List<Point> optimizedPolygon(List<Point> contour) {
-		List<Point> polygon = new ArrayList<Point>(); 
-		int[] possibles = possibles(contour);
-//		return possiblePolygons(contour).stream().min(Comparator.comparing(List<Point>::size)).get();
-		
-		int startPos = 0;
-		polygon.add(contour.get(startPos));
-		int pointerStep1 = getNextIndex(possibles, startPos);
-		int pointerStep2 = getSecondNextIndex(possibles, startPos); 
+		int[] pivots = pivots(contour);
+		int[] possibles = possibles(pivots);
+		List<List<Point>> possiblePolygons = buildPolygons(contour, possibles);
+		return possiblePolygons.stream().min(Comparator.comparing(List<Point>::size)).get();
+	}
+	
+	/**
+	 * builds all enclosed polygons based on possible segments
+	 * @return
+	 */
+	private static List<List<Point>> buildPolygons(List<Point> contour, int[] possibles){
+		List<List<Point>> polygons = new ArrayList<List<Point>>();
+		for (int i = 0; i < possibles.length; i++) {
+			polygons.add(buildPolygon(contour, possibles, i));
+		}
+		return polygons;
+	}
+	
+	/**
+	 * builds one enclosed polygon based on possible segments and a startIndex
+	 */
+	private static List<Point> buildPolygon(List<Point> contour, int[] possibles, int startIndex){
+		List<Point> polygon = new ArrayList<Point>(); 	
+		polygon.add(contour.get(startIndex));
+		int pointerStep1 = getNextPossibleIndex(possibles, startIndex);
+		int pointerStep2 = getSecondNextPossibleIndex(possibles, startIndex); 
 		while(pointerStep1 != pointerStep2){
 			polygon.add(contour.get(pointerStep1));
-			pointerStep1 = getNextIndex(possibles, pointerStep1);
-			pointerStep2 = getSecondNextIndex(possibles, pointerStep2); 
+			pointerStep1 = getNextPossibleIndex(possibles, pointerStep1);
+			pointerStep2 = getSecondNextPossibleIndex(possibles, pointerStep2); 
 		}
-		polygon.add(contour.get(startPos));
+		polygon.add(contour.get(startIndex));
 		return polygon;
 	}
 	
-	private static int getNextIndex(int[] possibles, int index){
+	private static int getNextPossibleIndex(int[] possibles, int index){
 		return possibles[index];
 	}
 	
-	private static int getSecondNextIndex(int[] possibles, int index){
+	private static int getSecondNextPossibleIndex(int[] possibles, int index){
 		int next = possibles[index];
 		return possibles[next];
 	}
 
-	private static int[] possibles(List<Point> contour) {
-		int[] possibles = new int[contour.size()-1];
-		int[] pivots = pivots(contour);
-		//System.out.println(Arrays.toString(pivots));
-		// generate and return possibles
-		// pivot[i+1] = pivot[i]-1
-		return pivots;
+	private static int[] possibles(int[] pivots) {
+		//TODO calculate possibles from pivots
+//		int[] possibles = new int[pivots.length];
+//		pivot[i+1] = pivot[i]-1
+		return pivots.clone();
 		
 	}
 
 	private static int[] pivots(List<Point> contour) {
 		int[] pivots = new int[contour.size()-1];
-//		contour.forEach(vertex -> pivots[contour.indexOf(vertex)] = maxStraightPath(contour, vertex));
 		for (int i = 0; i < contour.size()-1;i++) {
 			pivots[i] = maxStraightPath(contour, contour.get(i));
 		}
-		System.out.println(Arrays.toString(pivots));
 		return pivots;
 	}
 
@@ -76,9 +97,8 @@ public class PolygonAlgorithm {
 		Set<AbsoluteDirection> directions = new HashSet<AbsoluteDirection>();
 		int index = contour.indexOf(vertex);
 		while (true) {
-			Point vertex2Check = contour.get((index+1) % contour.size());
-			
-			Point previousVertex = contour.get((index) % contour.size());
+			Point vertex2Check = contour.get((index+1) % (contour.size()-1));
+			Point previousVertex = contour.get((index) % (contour.size()-1));
 			directions.add(getDirections(previousVertex, vertex2Check));
 			if (directions.size() > 3) break;
 			
@@ -87,10 +107,10 @@ public class PolygonAlgorithm {
 			updateConstraints(vector, c0,c1);
 			index++;
 		}
-		return index % contour.size();
+		return index % (contour.size()-1);
 	}
 	
-	public static AbsoluteDirection getDirections(Point p1, Point p2){
+	private static AbsoluteDirection getDirections(Point p1, Point p2){
 		Point gap = new Point(p1.x - p2.x, p1.y - p2.y);
 		if(gap.y == 1) {
 			return AbsoluteDirection.TOP;
@@ -134,43 +154,4 @@ public class PolygonAlgorithm {
 		return a.x * b.y - a.y * b.x;
 	}
 	
-	private static double grossPenalty(List<Point> possible){
-//		possible.forEach(vertex -> {
-//			penalty(possible, vertex, vj)
-//		});
-		return 0.0;
-	}
-	
-	private static double penalty(List<Point> contour, Point vi, Point vj){
-		int a = 0;
-		int b = 0;
-		int c = 0;
-		int x = vj.x-vi.x;
-		int y = vj.y-vi.y;
-		int x_ = (vi.x+vj.x)/(2-vi.x);
-		int y_ = (vi.y+vj.y)/(2-vi.y);
-		calcSumTable(contour, vi, vj);
-		return Math.sqrt(c*Math.pow(x, 2) + 2*b*x*y + a*Math.pow(y, 2));
-	}
-	
-	private static void calcSumTable(List<Point> contour, Point vi, Point vj){
-		Map<KeyPair, Double> sumTable = new HashMap<KeyPair, Double>();
-		double xk = 0;
-		double yk = 0;
-		double xk2 = 0;
-		double yk2 = 0;
-		double xkyk = 0;
-		for (int k = contour.indexOf(vi); k <= contour.indexOf(vj); k++) {
-			xk += contour.get(k).x-vi.x;
-			yk += contour.get(k).y-vi.y;
-			xk2 += Math.pow(xk, 2);
-			yk2 += Math.pow(yk, 2);
-			xkyk += xk*yk;
-			sumTable.put(new KeyPair(Penalty.XK, k), xk);
-			sumTable.put(new KeyPair(Penalty.YK, k), yk);
-			sumTable.put(new KeyPair(Penalty.XK2, k), xk2);
-			sumTable.put(new KeyPair(Penalty.YK2, k), yk2);
-			sumTable.put(new KeyPair(Penalty.XKYK, k), xkyk);
-		}
-	}
 }
