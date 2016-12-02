@@ -45,7 +45,7 @@ public class Binarize extends JPanel {
 	private static final File openPath = new File(".");
 	private static final String title = "Potrace";
 	private static final String author = "Goohsen-Sacker";
-	private static final String initalOpen = "./images/klein.png";
+	private static final String initalOpen = "./images/sample.png";
 	
 	private static JFrame frame;
 	
@@ -231,8 +231,8 @@ public class Binarize extends JPanel {
 		
 		List<List<Point>> polygons = PolygonAlgorithm.optimizedPolygons(contours, width);
 		
-		//dstView.getScreen().setPaths(paths);
-		//dstView.getScreen().setPolygons(polygons);
+		dstView.getScreen().setPaths(paths);
+		dstView.getScreen().setPolygons(polygons);
 		
 		long time = System.currentTimeMillis() - startTime;
 		   	

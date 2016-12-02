@@ -18,38 +18,36 @@ public class PolygonAlgorithm {
 	
 	public static List<List<Point>> optimizedPolygons(List<List<Point>> contours, int imgWidth) {
 		List<List<Point>> polygons = new ArrayList<List<Point>>();
-//		contours.forEach(contour -> polygons.add(optimizedPolygon(contour)));
-		polygons.add(optimizedPolygon(contours.get(0)));
+		contours.forEach(contour -> polygons.add(optimizedPolygon(contour)));
+//		polygons.add(optimizedPolygon(contours.get(3)));
 		return polygons;
 	}
 	
 	private static List<Point> optimizedPolygon(List<Point> contour) {
 		List<Point> polygon = new ArrayList<Point>(); 
 		int[] possibles = possibles(contour);
-//		for (int index : possibles) {
-//			polygon.add(contour.get(index));
-//		}
-//		
-		int index = 0;
-		polygon.add(contour.get(index));
-		outer:
-		while(true){
-			if (possibles[index] > contour.size()-1) {
-				int newIndex = possibles[index];
-				while(newIndex > contour.size()-1){
-					newIndex--;
-				}
-				polygon.add(contour.get(newIndex));
-				break outer;
-			} else {
-				index = possibles[index];
-				polygon.add(contour.get(index));
-			}
-		}
-		
-		// generate Polygons
 //		return possiblePolygons(contour).stream().min(Comparator.comparing(List<Point>::size)).get();
+		
+		int startPos = 0;
+		polygon.add(contour.get(startPos));
+		int pointerStep1 = getNextIndex(possibles, startPos);
+		int pointerStep2 = getSecondNextIndex(possibles, startPos); 
+		while(pointerStep1 != pointerStep2){
+			polygon.add(contour.get(pointerStep1));
+			pointerStep1 = getNextIndex(possibles, pointerStep1);
+			pointerStep2 = getSecondNextIndex(possibles, pointerStep2); 
+		}
+		polygon.add(contour.get(startPos));
 		return polygon;
+	}
+	
+	private static int getNextIndex(int[] possibles, int index){
+		return possibles[index];
+	}
+	
+	private static int getSecondNextIndex(int[] possibles, int index){
+		int next = possibles[index];
+		return possibles[next];
 	}
 
 	private static int[] possibles(List<Point> contour) {
