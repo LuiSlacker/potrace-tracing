@@ -2,6 +2,7 @@ package de.htw.ip.potrace;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,51 +18,70 @@ public class PolygonAlgorithm {
 	
 	public static List<List<Point>> optimizedPolygons(List<List<Point>> contours, int imgWidth) {
 		List<List<Point>> polygons = new ArrayList<List<Point>>();
-		contours.forEach(contour -> polygons.add(optimizedPolygon(contour)));
+//		contours.forEach(contour -> polygons.add(optimizedPolygon(contour)));
+		polygons.add(optimizedPolygon(contours.get(0)));
 		return polygons;
 	}
 	
 	private static List<Point> optimizedPolygon(List<Point> contour) {
-		return possiblePolygons(contour).stream().min(Comparator.comparing(List<Point>::size)).get();
+		List<Point> polygon = new ArrayList<Point>(); 
+		int[] possibles = possibles(contour);
+//		for (int index : possibles) {
+//			polygon.add(contour.get(index));
+//		}
+//		
+		int index = 0;
+		polygon.add(contour.get(index));
+		outer:
+		while(true){
+			if (possibles[index] > contour.size()-1) {
+				int newIndex = possibles[index];
+				while(newIndex > contour.size()-1){
+					newIndex--;
+				}
+				polygon.add(contour.get(newIndex));
+				break outer;
+			} else {
+				index = possibles[index];
+				polygon.add(contour.get(index));
+			}
+		}
+		
+		// generate Polygons
+//		return possiblePolygons(contour).stream().min(Comparator.comparing(List<Point>::size)).get();
+		return polygon;
 	}
 
-	private static List<List<Point>> possiblePolygons(List<Point> contour) {
-		List<List<Point>> possibles = new ArrayList<List<Point>>();
-		List<List<Point>> pivots = pivotPolygons(contour);
+	private static int[] possibles(List<Point> contour) {
+		int[] possibles = new int[contour.size()-1];
+		int[] pivots = pivots(contour);
+		//System.out.println(Arrays.toString(pivots));
 		// generate and return possibles
+		// pivot[i+1] = pivot[i]-1
 		return pivots;
 		
 	}
 
-	private static List<List<Point>> pivotPolygons(List<Point> contour) {
-		List<List<Point>> pivots = new ArrayList<List<Point>>();
-		contour.forEach(vertex -> pivots.add(straightPathPolygon(contour, vertex)));
+	private static int[] pivots(List<Point> contour) {
+		int[] pivots = new int[contour.size()-1];
+//		contour.forEach(vertex -> pivots[contour.indexOf(vertex)] = maxStraightPath(contour, vertex));
+		for (int i = 0; i < contour.size()-1;i++) {
+			pivots[i] = maxStraightPath(contour, contour.get(i));
+		}
+		System.out.println(Arrays.toString(pivots));
 		return pivots;
 	}
 
-	public static List<Point> straightPathPolygon(List<Point> contour, Point startVertex) {
-		List<Point> pivot = new ArrayList<Point>();
-		Point newVertex = startVertex;
-		pivot.add(startVertex);
-		do{
-			newVertex = maxStraightPath(contour, newVertex, startVertex);
-			pivot.add(newVertex);
-		} while(!(newVertex.equals(startVertex)));
-		return pivot;
-	}
-
-	public static Point maxStraightPath(List<Point> contour, Point vertex, Point startVertex) {
+	public static int maxStraightPath(List<Point> contour, Point vertex) {
 		Point c0 = new Point(0,0);
 		Point c1 = new Point(0,0);
 		Set<AbsoluteDirection> directions = new HashSet<AbsoluteDirection>();
-		
 		int index = contour.indexOf(vertex);
 		while (true) {
 			Point vertex2Check = contour.get((index+1) % contour.size());
-			if (vertex2Check.equals(startVertex)) break;
 			
 			Point previousVertex = contour.get((index) % contour.size());
-			directions.add(getDirections(previousVertex, vertex));
+			directions.add(getDirections(previousVertex, vertex2Check));
 			if (directions.size() > 3) break;
 			
 			Point vector = new Point(vertex2Check.x-vertex.x, vertex2Check.y-vertex.y);
@@ -69,7 +89,7 @@ public class PolygonAlgorithm {
 			updateConstraints(vector, c0,c1);
 			index++;
 		}
-		return contour.get((index+1) % contour.size());
+		return index % contour.size();
 	}
 	
 	public static AbsoluteDirection getDirections(Point p1, Point p2){
