@@ -70,10 +70,11 @@ public class PolygonAlgorithm {
 	}
 
 	private static int[] possibles(int[] pivots) {
-		//TODO calculate possibles from pivots
-//		int[] possibles = new int[pivots.length];
-//		pivot[i+1] = pivot[i]-1
-		return pivots.clone();
+		int[] possibles = new int[pivots.length];
+		for (int i = 0; i < pivots.length; i++) {
+			possibles[i] = ((pivots[((i-1 + pivots.length) % pivots.length)] - 1) + pivots.length) % pivots.length;
+		}
+		return possibles;
 		
 	}
 
