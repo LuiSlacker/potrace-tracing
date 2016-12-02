@@ -225,12 +225,13 @@ public class Binarize extends JPanel {
 			for (Integer vertex : path) {
 				contour.add(new Point(vertex % width, vertex / width));
 			}
+			contour.setType(((Path<Integer>)path).getType());
 			contours.add(contour);
 		}
 		List<List<Point>> polygons = PolygonAlgorithm.optimizedPolygons(contours, width);
 		
-		dstView.getScreen().setPaths(paths);
-		dstView.getScreen().setPolygons(polygons);
+		dstView.setPaths(contours);
+		dstView.setPolygons(polygons);
 		
 		long time = System.currentTimeMillis() - startTime;
 		   	

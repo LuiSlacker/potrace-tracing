@@ -37,6 +37,7 @@ public class ImageView extends JScrollPane{
 	private boolean centered = true;
 	private boolean showPaths, showVertices, showPolygons;
 	private boolean showPxls = true;
+	private List<List<Point>> paths, polygons = null;
 	
 	int pixels[] = null;		// pixel array in ARGB format
 	private double zoom = 1.0;
@@ -73,6 +74,14 @@ public class ImageView extends JScrollPane{
 		screen.invalidate();
 		screen.repaint();
 		
+	}
+	
+	public void setPaths(List<List<Point>> paths){
+		this.paths = paths;
+	}
+	
+	public void setPolygons(List<List<Point>> polygons) {
+		this.polygons = polygons;
 	}
 
 	public ImageView(int width, int height) {
@@ -268,24 +277,10 @@ public class ImageView extends JScrollPane{
 		private static final long serialVersionUID = 1L;
 		
 		private BufferedImage image = null;
-		private List<List<Integer>> paths = null;
-		private List<List<Point>> polygons = null;
 		
 		public ImageScreen(BufferedImage bi) {
 			super();
 			image = bi;
-		}
-		
-		/**
-		 * Sets the contour path of all closed regions
-		 *
-		 */
-		public void setPaths(List<List<Integer>> paths){
-			this.paths = paths;
-		}
-		
-		public void setPolygons(List<List<Point>> polygons) {
-			this.polygons = polygons;
 		}
 		
 		@Override
@@ -352,36 +347,32 @@ public class ImageView extends JScrollPane{
 				}
 				
 				// draw Path Outlines
-				if(this.paths != null && showPaths) {
+				if(paths != null && showPaths) {
 					g2.setStroke(new BasicStroke(2));
 					for (int i = 0; i < paths.size(); i++) {
-						Path<Integer> path = (Path<Integer>)paths.get(i);
+						Path<Point> path = (Path<Point>)paths.get(i);
 						g.setColor(path.getType() ? Color.RED: Color.GREEN); 
-						for (int j = 1; j < path.size(); j++) {
-							int current = path.get(j);
-							int currentX = current % (image.getWidth());
-							int currentY = current / (image.getWidth());
-							int penultimate = path.get(j-1);
-							int penultimateX = penultimate % image.getWidth();
-							int penultimateY = penultimate / image.getWidth();
+						for (int j = 0; j < path.size(); j++) {
+							Point current = path.get(j);
+							Point penultimate = path.get((j-1+path.size()) % path.size());
 							g.drawLine(
-									(int)((penultimateX + offsetX) * zoom),
-									(int)((penultimateY + offsetY) * zoom),
-									(int)((currentX + offsetX) * zoom),
-									(int)((currentY + offsetY) * zoom));
+									(int)((penultimate.x + offsetX) * zoom),
+									(int)((penultimate.y + offsetY) * zoom),
+									(int)((current.x + offsetX) * zoom),
+									(int)((current.y + offsetY) * zoom));
 						}
 						
 					}
 				}
 				
 				// draw Polygons
-				if (this.polygons != null && showPolygons) {
+				if (polygons != null && showPolygons) {
 					g2.setStroke(new BasicStroke(2));
 					g.setColor(Color.MAGENTA);
-					for (List<Point> polygon : this.polygons) {
-						for (int i = 1; i < polygon.size(); i++) {
+					for (List<Point> polygon : polygons) {
+						for (int i = 0; i < polygon.size(); i++) {
 							Point current = polygon.get(i);
-							Point penultimate = polygon.get(i-1);
+							Point penultimate = polygon.get((i-1 + polygon.size()) % polygon.size());
 							g.drawLine(
 									(int)((penultimate.x + offsetX) * zoom),
 									(int)((penultimate.y + offsetY) * zoom),
@@ -392,11 +383,11 @@ public class ImageView extends JScrollPane{
 				}
 				
 				// draw vertices
-				if (this.polygons != null && showVertices) {
+				if (polygons != null && showVertices) {
 					g2.setStroke(new BasicStroke(2));
 					g.setColor(Color.BLUE);
-					for (List<Point> polygon : this.polygons) {
-						for (int i = 1; i < polygon.size(); i++) {
+					for (List<Point> polygon : polygons) {
+						for (int i = 0; i < polygon.size(); i++) {
 							Point current = polygon.get(i);
 							drawCenteredCircle(
 									g2,
