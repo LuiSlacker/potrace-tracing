@@ -12,9 +12,10 @@ import de.htw.ip.basics.Path;
 
 public class PolygonAlgorithm {
 	
-	public static List<List<Point>> optimizedPolygons(ArrayList<Path> listpaths, int imgWidth) {
+	public static List<List<Point>> optimizedPolygons(ArrayList<Path<Point>> listpaths, int imgWidth) {
 		List<List<Point>> polygons = new ArrayList<List<Point>>();
 		listpaths.forEach(contour -> polygons.add(optimizedPolygon(contour)));
+//		polygons.add(optimizedPolygon(listpaths.get(0)));
 		return polygons;
 	}
 	
@@ -39,37 +40,71 @@ public class PolygonAlgorithm {
 	 */
 	private static List<List<Point>> buildPolygons(List<Point> contour, int[] possibles){
 		List<List<Point>> polygons = new ArrayList<List<Point>>();
-		for (int i = 0; i < possibles.length; i++) {
-			polygons.add(buildPolygon(contour, possibles, i));
-		}
+//		for (int i = 0; i < possibles.length; i++) {
+//			polygons.add(buildPolygon(contour, possibles, i));
+//		}
+		polygons.add(buildPolygon(contour, possibles, 0));
 		return polygons;
 	}
 	
-	/**
-	 * builds one enclosed polygon based on possible segments and a startIndex
-	 */
 	private static List<Point> buildPolygon(List<Point> contour, int[] possibles, int startIndex){
-		List<Point> polygon = new ArrayList<Point>(); 	
-		polygon.add(contour.get(startIndex));
-		int pointerStep1 = getNextPossibleIndex(possibles, startIndex);
-		int pointerStep2 = getSecondNextPossibleIndex(possibles, startIndex); 
-		while(pointerStep1 != pointerStep2){
-			polygon.add(contour.get(pointerStep1));
-			pointerStep1 = getNextPossibleIndex(possibles, pointerStep1);
-			pointerStep2 = getSecondNextPossibleIndex(possibles, pointerStep2); 
+		List<Point> polygon = new ArrayList<Point>();
+		int currentPointer = startIndex;
+		int nextPointer = getNextPossibleIndex(possibles, startIndex);
+		polygon.add(contour.get(currentPointer));
+		while(normalizedVertex(nextPointer, startIndex, possibles.length)-normalizedVertex(currentPointer, startIndex, possibles.length) > 0){
+			polygon.add(contour.get(nextPointer));
+			currentPointer = nextPointer;
+			nextPointer = getNextPossibleIndex(possibles, nextPointer);
 		}
 		return polygon;
 	}
 	
-	private static int getNextPossibleIndex(int[] possibles, int index){
-		return possibles[index];
+	private static int normalizedVertex(int vertex, int startVertex, int n){
+		return (vertex - startVertex + n) % n;
 	}
 	
-	private static int getSecondNextPossibleIndex(int[] possibles, int index){
-		int next = possibles[index];
-		return possibles[next];
+//	/**
+//	 * builds one enclosed polygon based on possible segments and a startIndex
+//	 */
+//	private static List<Point> buildPolygon(List<Point> contour, int[] possibles, int startIndex){
+//		List<Point> polygon = new ArrayList<Point>(); 	
+//		polygon.add(contour.get(startIndex));
+//		int pointerStep1 = getNextPossibleIndex(possibles, startIndex);
+//		int pointerStep2 = getSecondNextPossibleIndex(possibles, startIndex); 
+//		while(pointerStep1 != pointerStep2){
+//			polygon.add(contour.get(pointerStep1));
+//			pointerStep1 = getNextPossibleIndex(possibles, pointerStep1);
+//			pointerStep2 = getSecondNextPossibleIndex(possibles, pointerStep2); 
+//		}
+//		return polygon;
+//	}
+//	
+	private static int getNextPossibleIndex(int[] possibles, int index){
+		int assumedPossible = index;
+		while (cyclicDiffViolated(index, assumedPossible, possibles.length)) {
+			assumedPossible = (assumedPossible - 1 + possibles.length) % possibles.length;
+		}
+		return possibles[assumedPossible];
 	}
+//	
+//	private static int getSecondNextPossibleIndex(int[] possibles, int index){
+//		int next = getNextPossibleIndex(possibles, index);
+//		int secondNext = getNextPossibleIndex(possibles, next);
+//		return secondNext;
+//	}
 
+	private static boolean cyclicDiffViolated(int i, int j, int n){
+		int cd = cyclicDiff(i, j, n-1);
+		boolean b = cyclicDiff(i, j, n) > (n-3);
+		return cyclicDiff(i, j, n-1) > (n-1-3);
+		
+	}
+	
+	private static int cyclicDiff(int i, int j, int n){
+		return (j < i)? j-i+n : j-i;
+	}
+	
 	private static int[] possibles(int[] pivots) {
 		int[] possibles = new int[pivots.length];
 		for (int i = 0; i < pivots.length; i++) {

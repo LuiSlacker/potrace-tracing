@@ -11,12 +11,12 @@ import de.htw.ip.main.ImageView;
 
 public class ContourDodo {
 	
-	public static ArrayList<Path> contourtracking(int[] pixels, int width, int height) {
+	public static ArrayList<Path<Point>> contourtracking(int[] pixels, int width, int height) {
 
 //		int[] binarizedPix = Labeling.isoDataAlgo(pixels);
 //		int[] pixelsLabeled = Labeling.initialLabeling(width, height, binarizedPix);
 		int[] pixelsLabeled = Labeling.binarizeAndLabel(pixels, 128);
-		ArrayList<Path> listOfPaths = new ArrayList<Path>();
+		ArrayList<Path<Point>> listOfPaths = new ArrayList<Path<Point>>();
 
 		portraceAlgorithm(pixelsLabeled, listOfPaths, width, height);
 
@@ -30,7 +30,7 @@ public class ContourDodo {
 		return listOfPaths;
 	}
 
-	public static void portraceAlgorithm(int[] pixelsLabeled, ArrayList<Path> listOfPaths, int width, int height) {
+	public static void portraceAlgorithm(int[] pixelsLabeled, ArrayList<Path<Point>> listOfPaths, int width, int height) {
 
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
