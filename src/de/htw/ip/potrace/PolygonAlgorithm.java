@@ -8,12 +8,13 @@ import java.util.List;
 import java.util.Set;
 
 import de.htw.ip.basics.AbsoluteDirection;
+import de.htw.ip.basics.Path;
 
 public class PolygonAlgorithm {
 	
-	public static List<List<Point>> optimizedPolygons(List<List<Point>> contours, int imgWidth) {
+	public static List<List<Point>> optimizedPolygons(ArrayList<Path> listpaths, int imgWidth) {
 		List<List<Point>> polygons = new ArrayList<List<Point>>();
-		contours.forEach(contour -> polygons.add(optimizedPolygon(contour)));
+		listpaths.forEach(contour -> polygons.add(optimizedPolygon(contour)));
 		return polygons;
 	}
 	
@@ -102,7 +103,7 @@ public class PolygonAlgorithm {
 			updateConstraints(vector, c0,c1);
 			index++;
 		}
-		return index % contour.size();
+		return (index) % contour.size();
 	}
 	
 	private static AbsoluteDirection getDirections(Point p1, Point p2){

@@ -34,6 +34,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import de.htw.ip.basics.BasicAlgorithms;
 import de.htw.ip.basics.Path;
 import de.htw.ip.potrace.ContourAlgorithm;
+import de.htw.ip.potrace.ContourDodo;
 import de.htw.ip.potrace.PolygonAlgorithm;
 
 public class Binarize extends JPanel {
@@ -45,7 +46,7 @@ public class Binarize extends JPanel {
 	private static final File openPath = new File(".");
 	private static final String title = "Potrace";
 	private static final String author = "Goohsen-Sacker";
-	private static final String initalOpen = "./images/tools.png";
+	private static final String initalOpen = "./images/head.png";
 	
 	private static JFrame frame;
 	
@@ -216,21 +217,41 @@ public class Binarize extends JPanel {
     	
 		long startTime = System.currentTimeMillis();
 		
-		// potrace contour Algorithm
-		binarize(dstPixels, BasicAlgorithms.getIsoDataThreshold(dstPixels));
-		List<List<Integer>> paths = ContourAlgorithm.contours(dstPixels, width, height);
-		List<List<Point>> contours = new ArrayList<List<Point>>();
-		for (List<Integer> path : paths) {
-			Path<Point> contour = new Path<Point>();
-			for (Integer vertex : path) {
-				contour.add(new Point(vertex % width, vertex / width));
-			}
-			contour.setType(((Path<Integer>)path).getType());
-			contours.add(contour);
-		}
-		List<List<Point>> polygons = PolygonAlgorithm.optimizedPolygons(contours, width);
+//		 potrace contour Algorithm
+//		binarize(dstPixels, BasicAlgorithms.getIsoDataThreshold(dstPixels));
+//		List<List<Integer>> paths = ContourAlgorithm.contours(dstPixels, width, height);
 		
-		dstView.setPaths(contours);
+		List<List<Point>> contours = new ArrayList<List<Point>>();
+		
+		
+//		for (List<Integer> path : paths) {
+//			Path<Point> contour = new Path<Point>();
+//			for (Integer vertex : path) {
+//				contour.add(new Point(vertex % width, vertex / width));
+//			}
+//			contour.setType(((Path<Integer>)path).getType());
+//			contours.add(contour);
+//		}
+		
+		
+		
+		ArrayList<Path> listpaths = null;
+		listpaths = ContourDodo.contourtracking(dstPixels, width, height );
+			
+//			for(Path p: listpaths){
+//				Point a = (Point) p.get(0);
+//				if(dstPixels[a.y * width + a.x]==-16777216){
+//					
+//					p.isOuter = true;
+//				}else{
+//					p.isOuter = false;
+//				}
+//			}
+
+			List<List<Point>> polygons = PolygonAlgorithm.optimizedPolygons(listpaths, width);
+
+		
+		dstView.setPaths(listpaths);
 		dstView.setPolygons(polygons);
 		
 		long time = System.currentTimeMillis() - startTime;

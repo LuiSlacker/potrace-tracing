@@ -14,6 +14,7 @@ import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -37,7 +38,9 @@ public class ImageView extends JScrollPane{
 	private boolean centered = true;
 	private boolean showPaths, showVertices, showPolygons;
 	private boolean showPxls = true;
-	private List<List<Point>> paths, polygons = null;
+	private ArrayList<Path> paths;
+	private List<List<Point>>polygons = null;
+	private double minWidth =  500;
 	
 	int pixels[] = null;		// pixel array in ARGB format
 	private double zoom = 1.0;
@@ -76,7 +79,7 @@ public class ImageView extends JScrollPane{
 		
 	}
 	
-	public void setPaths(List<List<Point>> paths){
+	public void setPaths(ArrayList<Path> paths){
 		this.paths = paths;
 	}
 	
@@ -402,6 +405,14 @@ public class ImageView extends JScrollPane{
 		
 		@Override
 		public Dimension getPreferredSize() {
+//			if(image != null) {
+//				if(zoom*image.getWidth() <= minWidth){
+//					zoom = Math.floor((minWidth/image.getWidth()));
+//				}
+//				return new Dimension((int)(zoom*image.getWidth()), (int)(zoom*image.getHeight()));
+//			}
+//			else
+//				return new Dimension(100, 60);
 			if(image != null) 
 				return new Dimension((int) (zoom * image.getWidth()), (int) (zoom * image.getHeight()));
 			else
