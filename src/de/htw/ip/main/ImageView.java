@@ -102,7 +102,9 @@ public class ImageView extends JScrollPane{
 	public void setMaxSize(Dimension dim) {
 		// limit the size of the image view
 		maxSize = new Dimension(dim);
-		
+		if(zoom*screen.image.getWidth() <= minWidth){
+			zoom = Math.floor((minWidth/screen.image.getWidth()));
+		}
 		Dimension size = new Dimension(maxSize);
 		if(size.width - borderX > screen.image.getWidth()) size.width = screen.image.getWidth() + borderX;
 		if(size.height - borderY > screen.image.getHeight()) size.height = screen.image.getHeight() + borderY;

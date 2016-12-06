@@ -117,28 +117,27 @@ public class PolygonAlgorithm {
 	private static int[] pivots(List<Point> contour) {
 		int[] pivots = new int[contour.size()];
 		for (int i = 0; i < contour.size();i++) {
-			pivots[i] = maxStraightPath(contour, contour.get(i));
+			pivots[i] = maxStraightPath(contour, i);
 		}
 		return pivots;
 	}
 
-	public static int maxStraightPath(List<Point> contour, Point vertex) {
+	public static int maxStraightPath(List<Point> contour, int vertexIndex) {
 		Point c0 = new Point(0,0);
 		Point c1 = new Point(0,0);
+		Point vertex = contour.get(vertexIndex);
 		Set<AbsoluteDirection> directions = new HashSet<AbsoluteDirection>();
-		int index = contour.indexOf(vertex);
 		while (true) {
-			Point currentVertex = contour.get((index) % contour.size());
-			Point vertex2Check = contour.get((index+1) % contour.size());
+			Point currentVertex = contour.get((vertexIndex) % contour.size());
+			Point vertex2Check = contour.get((vertexIndex+1) % contour.size());
 			directions.add(getDirections(currentVertex, vertex2Check));
 			if (directions.size() > 3) break;
-			
 			Point vector = new Point(vertex2Check.x-vertex.x, vertex2Check.y-vertex.y);
 			if (constraintsViolated(vector, c0, c1)) break;
 			updateConstraints(vector, c0,c1);
-			index++;
+			vertexIndex++;
 		}
-		return (index) % contour.size();
+		return (vertexIndex) % contour.size();
 	}
 	
 	private static AbsoluteDirection getDirections(Point p1, Point p2){
