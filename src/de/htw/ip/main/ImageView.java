@@ -38,8 +38,8 @@ public class ImageView extends JScrollPane{
 	private boolean centered = true;
 	private boolean showPaths, showVertices, showPolygons;
 	private boolean showPxls = true;
-	private ArrayList<Path> paths;
-	private List<List<Point>>polygons = null;
+	private ArrayList<Path<Point>> paths;
+	private List<List<Point>> polygons = null;
 	private double minWidth =  500;
 	
 	int pixels[] = null;		// pixel array in ARGB format
@@ -79,7 +79,7 @@ public class ImageView extends JScrollPane{
 		
 	}
 	
-	public void setPaths(ArrayList<Path> paths){
+	public void setPaths(ArrayList<Path<Point>> paths){
 		this.paths = paths;
 	}
 	
@@ -405,18 +405,18 @@ public class ImageView extends JScrollPane{
 		
 		@Override
 		public Dimension getPreferredSize() {
-//			if(image != null) {
-//				if(zoom*image.getWidth() <= minWidth){
-//					zoom = Math.floor((minWidth/image.getWidth()));
-//				}
-//				return new Dimension((int)(zoom*image.getWidth()), (int)(zoom*image.getHeight()));
-//			}
-//			else
-//				return new Dimension(100, 60);
-			if(image != null) 
-				return new Dimension((int) (zoom * image.getWidth()), (int) (zoom * image.getHeight()));
+			if(image != null) {
+				if(zoom*image.getWidth() <= minWidth){
+					zoom = Math.floor((minWidth/image.getWidth()));
+				}
+				return new Dimension((int)(zoom*image.getWidth()), (int)(zoom*image.getHeight()));
+			}
 			else
 				return new Dimension(100, 60);
+//			if(image != null) 
+//				return new Dimension((int) (zoom * image.getWidth()), (int) (zoom * image.getHeight()));
+//			else
+//				return new Dimension(100, 60);
 		}
 		
 		public void drawCenteredCircle(Graphics2D g, int x, int y, int r) {
