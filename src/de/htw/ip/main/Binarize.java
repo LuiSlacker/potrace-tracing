@@ -40,8 +40,8 @@ public class Binarize extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	private static final int border = 10;
-	private static final int maxWidth = 1000;
-	private static final int maxHeight = 600;
+	private static final int maxWidth = 1600;
+	private static final int maxHeight = 900;
 	private static final File openPath = new File(".");
 	private static final String title = "Potrace";
 	private static final String author = "Goohsen-Sacker";
@@ -78,9 +78,11 @@ public class Binarize extends JPanel {
 			public void actionPerformed(ActionEvent e) {
         		File input = openFile();
         		if(input != null) {
+        			dstView.setZoom(1);
         			dstView.loadImage(input);
         			dstView.setMaxSize(new Dimension(maxWidth, maxHeight));
 	                binarizeImage();
+	                
         		}
         	}        	
         });
@@ -89,7 +91,7 @@ public class Binarize extends JPanel {
         statusLine = new JLabel(" ");
         
         final int sliderGranularity = 100;
-        JSlider zoomSlider = new JSlider(SwingConstants.HORIZONTAL, 1*sliderGranularity, 20*sliderGranularity, 1*sliderGranularity);
+        JSlider zoomSlider = new JSlider(SwingConstants.HORIZONTAL, 1*sliderGranularity, 200*sliderGranularity, 1*sliderGranularity);
         zoomSlider.addChangeListener(new ChangeListener() {
 			
 			@Override
@@ -221,6 +223,17 @@ public class Binarize extends JPanel {
 		listpaths.forEach(listpath -> {
 			listpath.remove(listpath.size()-1);
 		});
+		
+		for(Path<Point> p: listpaths){
+			Point a = p.get(0);
+			if(dstPixels[a.y * width + a.x]==-16777216){
+				
+				p.setType(true);
+			}else{
+				p.setType(false);
+			}
+		}
+		
 		List<List<Point>> polygons = PolygonAlgorithm.optimizedPolygons(listpaths, width);
 
 		dstView.setPaths(listpaths);
