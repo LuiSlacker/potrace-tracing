@@ -10,4 +10,9 @@ public class LineElement extends CurveElement{
 		this.a = a;
 	}
 	
+	@Override
+	public String toString() {
+		return "LineElement | a:" + a + "midpoint2: " + midPoint2;
+	}
+	
 }

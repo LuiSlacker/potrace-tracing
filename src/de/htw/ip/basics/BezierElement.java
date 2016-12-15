@@ -12,5 +12,9 @@ public class BezierElement extends CurveElement{
 		this.z2 = z2;
 	}
 	
+	@Override
+	public String toString() {
+		return "BezierElement | z1:" + z1 + "z2: " + z2 + "midpoint2: " + midPoint2;
+	}
 	
 }
