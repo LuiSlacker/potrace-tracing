@@ -15,6 +15,9 @@ public class BezierAlgorithm {
 		polygons.forEach(polygon -> {
 			bezierCurves.add(generateBezierCurve(polygon));
 		});
+		bezierCurves.forEach(curve -> {
+			curve.forEach(elem -> System.out.println(elem.toString()));
+		});
 		return bezierCurves;
 	}
 	
