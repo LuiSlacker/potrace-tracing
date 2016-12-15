@@ -3,13 +3,11 @@ package de.htw.ip.basics;
 import java.awt.geom.Point2D;
 
 public class LineElement extends CurveElement{
-	Point2D.Double a;
-	Point2D.Double midPoint2;
+	public Point2D.Double a;
 	
 	public LineElement(Point2D.Double a, Point2D.Double midPoint2){
-		super();
+		super(midPoint2);
 		this.a = a;
-		this.midPoint2 = midPoint2;
 	}
 	
 }

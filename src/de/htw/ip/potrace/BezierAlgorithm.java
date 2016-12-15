@@ -10,11 +10,12 @@ import de.htw.ip.basics.CurveElement;
 import de.htw.ip.basics.LineElement;
 
 public class BezierAlgorithm {
-	public static void generateBezierCurves(List<List<Point>> polygons){
+	public static List<List<CurveElement>> generateBezierCurves(List<List<Point>> polygons){
 		List<List<CurveElement>> bezierCurves = new ArrayList<List<CurveElement>>();
 		polygons.forEach(polygon -> {
 			bezierCurves.add(generateBezierCurve(polygon));
 		});
+		return bezierCurves;
 	}
 	
 	private static List<CurveElement> generateBezierCurve(List<Point> polygon){
