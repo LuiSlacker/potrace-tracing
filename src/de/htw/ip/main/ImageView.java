@@ -12,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -22,6 +23,9 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
+import de.htw.ip.basics.BezierElement;
+import de.htw.ip.basics.CurveElement;
+import de.htw.ip.basics.LineElement;
 import de.htw.ip.basics.Path;
 
 
@@ -40,6 +44,7 @@ public class ImageView extends JScrollPane{
 	private boolean showPxls = true;
 	private ArrayList<Path<Point>> paths;
 	private List<List<Point>> polygons = null;
+	private List<List<CurveElement>> curves = null;
 	private double minWidth =  500;
 	
 	int pixels[] = null;		// pixel array in ARGB format
@@ -85,6 +90,10 @@ public class ImageView extends JScrollPane{
 	
 	public void setPolygons(List<List<Point>> polygons) {
 		this.polygons = polygons;
+	}
+	
+	public void setCurves(List<List<CurveElement>> curves) {
+		this.curves = curves;
 	}
 
 	public ImageView(int width, int height) {
@@ -400,6 +409,38 @@ public class ImageView extends JScrollPane{
 									(int)((current.y + offsetY) * zoom), 
 									5);
 						}
+					}
+				}
+				
+				// draw curves
+				if (curves != null && true) { // TODO showCurves
+					g2.setStroke(new BasicStroke(2));
+					g.setColor(Color.GREEN);
+					for (List<CurveElement> curve : curves) {
+						Path2D shape = new Path2D.Double();
+						shape.moveTo(
+								(curve.get(curve.size()-1).midPoint2.x + offsetX) * zoom,
+								(curve.get(curve.size()-1).midPoint2.y + offsetY) * zoom);
+						for (CurveElement curveElement : curve) {
+							if (curveElement instanceof LineElement) {
+								shape.lineTo(
+										(((LineElement) curveElement).a.x + offsetX) * zoom,
+										(((LineElement) curveElement).a.y + offsetY) * zoom);
+								shape.lineTo(
+										(((LineElement) curveElement).midPoint2.x + offsetX) * zoom,
+										(((LineElement) curveElement).midPoint2.y + offsetY) * zoom);
+							} else {
+								BezierElement b =  (BezierElement) curveElement;
+								shape.curveTo(
+										(b.z1.x + offsetX) * zoom,
+										(b.z1.y + offsetY) * zoom,
+										(b.z2.x + offsetX) * zoom,
+										(b.z2.y + offsetY) * zoom,
+										(b.midPoint2.x + offsetX) * zoom,
+										(b.midPoint2.y + offsetY) * zoom);
+							}
+						};
+						g2.draw(shape);
 					}
 				}
 			}

@@ -32,7 +32,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.htw.ip.basics.BasicAlgorithms;
+import de.htw.ip.basics.CurveElement;
 import de.htw.ip.basics.Path;
+import de.htw.ip.potrace.BezierAlgorithm;
 import de.htw.ip.potrace.ContourDodo;
 import de.htw.ip.potrace.PolygonAlgorithm;
 
@@ -227,17 +229,18 @@ public class Binarize extends JPanel {
 		for(Path<Point> p: listpaths){
 			Point a = p.get(0);
 			if(dstPixels[a.y * width + a.x]==-16777216){
-				
 				p.setType(true);
-			}else{
+			} else{
 				p.setType(false);
 			}
 		}
 		
 		List<List<Point>> polygons = PolygonAlgorithm.optimizedPolygons(listpaths, width);
+		List<List<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons);
 
 		dstView.setPaths(listpaths);
 		dstView.setPolygons(polygons);
+		dstView.setCurves(curves);
 		
 		long time = System.currentTimeMillis() - startTime;
 		   	
