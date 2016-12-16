@@ -31,23 +31,23 @@ public class BezierAlgorithm {
 			Point2D.Double midPoint2 = new Point2D.Double(
 					polygon.get((i+1) % polygon.size()).x - a.x/2,
 					polygon.get((i+1) % polygon.size()).y - a.y/2);
-			Point2D.Double s_ = new Point2D.Double(midPoint2.y-midPoint1.y, -midPoint2.x-midPoint1.x);
+			Point2D.Double s_ = new Point2D.Double(midPoint2.y - midPoint1.y, -midPoint2.x + midPoint1.x);
 			double s_length = Math.sqrt(Math.pow(s_.x, 2) + Math.pow(s_.y, 2));
 			Point2D.Double s = new Point2D.Double(s_.x/s_length, s_.y/s_length );
 			double d = scalarProduct(s, new Point2D.Double(a.x - midPoint1.x, a.y - midPoint1.y));
 			double alpha = 4/3 * (d-0.5)/d; 
 			alpha = alpha < 0.55? 0.55: alpha;
-			Point2D.Double z1 = new Point2D.Double(
-					alpha * (a.x - midPoint1.x),
-					alpha * (a.y - midPoint1.y));
-			
-			Point2D.Double z2 = new Point2D.Double(
-					alpha * (a.x - midPoint2.x),
-					alpha * (a.y - midPoint2.y));
 			
 			if (alpha > 1){
 				curve.add(new LineElement(a, midPoint2));
 			} else {
+				Point2D.Double z1 = new Point2D.Double(
+						alpha * (a.x - midPoint1.x),
+						alpha * (a.y - midPoint1.y));
+				
+				Point2D.Double z2 = new Point2D.Double(
+						alpha * (a.x - midPoint2.x),
+						alpha * (a.y - midPoint2.y));
 				curve.add(new BezierElement(z1, z2, midPoint2));
 			}
 		}
