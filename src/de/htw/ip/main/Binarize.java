@@ -69,10 +69,6 @@ public class Binarize extends JPanel {
         dstView = new ImageView(input);
         dstView.setMaxSize(new Dimension(maxWidth, maxHeight));
        
-		// create an empty destination image
-
-
-		
 		// load image button
         JButton load = new JButton("Bild öffnen");
         load.addActionListener(new ActionListener() {
@@ -140,6 +136,15 @@ public class Binarize extends JPanel {
 			}
 		});
         
+        JCheckBox bezier = new JCheckBox("Bezier");
+        bezier.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dstView.setShowBezier(bezier.isSelected()? true: false);
+			}
+		});
+        
         // arrange all controls
         JPanel controls = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -156,6 +161,7 @@ public class Binarize extends JPanel {
         controlsBottom.add(paths, c);
         controlsBottom.add(polygons, c);
         controlsBottom.add(vertices, c);
+        controlsBottom.add(bezier, c);
         
         add(controls, BorderLayout.NORTH);
         add(images, BorderLayout.CENTER);
