@@ -99,6 +99,8 @@ public class ImageView extends JScrollPane{
 	
 	public void setCurves(List<List<CurveElement>> curves) {
 		this.curves = curves;
+		screen.invalidate();
+		screen.repaint();
 	}
 
 	public ImageView(int width, int height) {

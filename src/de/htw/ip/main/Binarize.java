@@ -53,9 +53,13 @@ public class Binarize extends JPanel {
 	
 	private ImageView dstView;				// binarized image view
 	private int dstPixels[];
+	private List<List<Point>> polygons;
 	
 	private JLabel statusLine;				// to print some status text
 	private JLabel zoomLabel = new JLabel("Zoom:");
+	private JLabel alphaMinLabel = new JLabel("alphaMin:");
+	private JLabel alphaMaxLabel = new JLabel("alphaMax:");
+	private JLabel distanceFactorLabel = new JLabel("distanceFactor:");
 
 	public Binarize() {
         super(new BorderLayout(border, border));
@@ -99,12 +103,48 @@ public class Binarize extends JPanel {
 			}
 		});
         
+        JSlider alphaMinSlider = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 55);
+        alphaMinSlider.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				double val = (double)((JSlider)e.getSource()).getValue();
+				List<List<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, val/100, 1, 4/3);
+				dstView.setCurves(curves);
+				
+			}
+		});
+        
+        JSlider alphaMaxSlider = new JSlider(SwingConstants.HORIZONTAL, 100, 120, 100);
+        alphaMaxSlider.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				double val = (double)((JSlider)e.getSource()).getValue();
+				List<List<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, val/100, 4/3);
+				dstView.setCurves(curves);
+				
+			}
+		});
+        
+        JSlider distanceFactorSlider = new JSlider(SwingConstants.HORIZONTAL, 100, 150, 133);
+        distanceFactorSlider.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				double val = (double)((JSlider)e.getSource()).getValue();
+				List<List<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, 1, val/100);
+				dstView.setCurves(curves);
+				
+			}
+		});
+        
         JCheckBox vertices = new JCheckBox("Vertices");
         vertices.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dstView.setShowVertices(vertices.isSelected() ? true: false);
+				dstView.setShowVertices(vertices.isSelected());
 			}
 		});
         
@@ -113,7 +153,7 @@ public class Binarize extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dstView.setShowPolygons(polygons.isSelected()? true: false);
+				dstView.setShowPolygons(polygons.isSelected());
 			}
 		});
         
@@ -122,7 +162,7 @@ public class Binarize extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dstView.setShowPaths(paths.isSelected()? true: false);
+				dstView.setShowPaths(paths.isSelected());
 			}
 		});
         
@@ -132,7 +172,7 @@ public class Binarize extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dstView.setShowPixels(pxls.isSelected()? true: false);
+				dstView.setShowPixels(pxls.isSelected());
 			}
 		});
         
@@ -141,7 +181,7 @@ public class Binarize extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dstView.setShowBezier(bezier.isSelected()? true: false);
+				dstView.setShowBezier(bezier.isSelected());
 			}
 		});
         
@@ -152,6 +192,12 @@ public class Binarize extends JPanel {
         controls.add(load, c);
         controls.add(zoomLabel, c);
         controls.add(zoomSlider, c);
+        controls.add(alphaMinLabel, c);
+        controls.add(alphaMinSlider, c);
+        controls.add(alphaMaxLabel, c);
+        controls.add(alphaMaxSlider, c);
+        controls.add(distanceFactorLabel, c);
+        controls.add(distanceFactorSlider, c);
         
         JPanel images = new JPanel(new FlowLayout());
         images.add(dstView);
@@ -166,7 +212,6 @@ public class Binarize extends JPanel {
         add(controls, BorderLayout.NORTH);
         add(images, BorderLayout.CENTER);
         add(controlsBottom, BorderLayout.SOUTH);
-        //add(statusLine, BorderLayout.SOUTH);
                
         setBorder(BorderFactory.createEmptyBorder(border,border,border,border));
         
@@ -241,8 +286,8 @@ public class Binarize extends JPanel {
 			}
 		}
 		
-		List<List<Point>> polygons = PolygonAlgorithm.optimizedPolygons(listpaths, width);
-		List<List<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons);
+		polygons = PolygonAlgorithm.optimizedPolygons(listpaths, width);
+		List<List<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, 1, 4/3);
 
 		dstView.setPaths(listpaths);
 		dstView.setPolygons(polygons);
