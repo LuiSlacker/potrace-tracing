@@ -10,10 +10,10 @@ import de.htw.ip.basics.CurveElement;
 import de.htw.ip.basics.LineElement;
 
 public class BezierAlgorithm {
-	public static List<List<CurveElement>> generateBezierCurves(List<List<Point>> polygons){
+	public static List<List<CurveElement>> generateBezierCurves(List<List<Point>> polygons, double alphaMin, double alphaMax, double distanceFactor){
 		List<List<CurveElement>> bezierCurves = new ArrayList<List<CurveElement>>();
 		polygons.forEach(polygon -> {
-			bezierCurves.add(generateBezierCurve(polygon));
+			bezierCurves.add(generateBezierCurve(polygon, alphaMin, alphaMax, distanceFactor));
 		});
 		bezierCurves.forEach(curve -> {
 			curve.forEach(elem -> System.out.println(elem.toString()));
@@ -21,7 +21,7 @@ public class BezierAlgorithm {
 		return bezierCurves;
 	}
 	
-	private static List<CurveElement> generateBezierCurve(List<Point> polygon){
+	private static List<CurveElement> generateBezierCurve(List<Point> polygon, double alphaMin, double alphaMax, double distanceFactor){
 		List<CurveElement> curve = new ArrayList<CurveElement>();
 		for (int i = 0; i < polygon.size(); i++) {
 			Point2D.Double a = new Point2D.Double(polygon.get(i).x, polygon.get(i).y);
@@ -35,10 +35,10 @@ public class BezierAlgorithm {
 			double s_length = Math.sqrt(Math.pow(s_.x, 2) + Math.pow(s_.y, 2));
 			Point2D.Double s = new Point2D.Double(s_.x/s_length, s_.y/s_length );
 			double d = scalarProduct(s, new Point2D.Double(a.x - midPoint1.x, a.y - midPoint1.y));
-			double alpha = 4/3 * (d-0.5)/d; 
-			alpha = alpha < 0.55? 0.55: alpha;
+			double alpha = distanceFactor * (d - 0.5)/d; 
+			alpha = alpha < alphaMin? alphaMin: alpha;
 			
-			if (alpha > 1){
+			if (alpha > alphaMax){
 				curve.add(new LineElement(a, midPoint2));
 			} else {
 				Point2D.Double z1 = new Point2D.Double(
