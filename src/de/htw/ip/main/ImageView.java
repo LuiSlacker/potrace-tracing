@@ -40,7 +40,7 @@ public class ImageView extends JScrollPane{
 	private double maxViewMagnification = 0.0;		// use 0.0 to disable limits 
 	private boolean keepAspectRatio = true;
 	private boolean centered = true;
-	private boolean showPaths, showVertices, showPolygons;
+	private boolean showPaths, showVertices, showPolygons, showBezier;
 	private boolean showPxls = true;
 	private ArrayList<Path<Point>> paths;
 	private List<List<Point>> polygons = null;
@@ -81,7 +81,12 @@ public class ImageView extends JScrollPane{
 		this.showPxls = showPxls;
 		screen.invalidate();
 		screen.repaint();
-		
+	}
+	
+	public void setShowBezier(boolean showBezier) {
+		this.showBezier = showBezier;
+		screen.invalidate();
+		screen.repaint();
 	}
 	
 	public void setPaths(ArrayList<Path<Point>> paths){
@@ -413,7 +418,7 @@ public class ImageView extends JScrollPane{
 				}
 				
 				// draw curves
-				if (curves != null && true) { // TODO showCurves
+				if (curves != null && showBezier) {
 					g2.setStroke(new BasicStroke(2));
 					g.setColor(Color.GREEN);
 					for (List<CurveElement> curve : curves) {
