@@ -56,6 +56,10 @@ public class Binarize extends JPanel {
 	private int dstPixels[];
 	private List<Path<Point>> polygons;
 	
+	private double alphaMin = 0.55;
+	private double alphaMax = 1;
+	private double distanceFactor = 4/3;
+	
 	private JLabel zoomLabel = new JLabel("Zoom:");
 	private JLabel alphaMinLabel = new JLabel("alphaMin:");
 	private JLabel alphaMaxLabel = new JLabel("alphaMax:");
@@ -105,8 +109,8 @@ public class Binarize extends JPanel {
 			
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				double val = (double)((JSlider)e.getSource()).getValue();
-				List<Path<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, val/100, 1, 4/3);
+				alphaMin = (double)((JSlider)e.getSource()).getValue()/100;
+				List<Path<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, alphaMin, alphaMax, distanceFactor);
 				dstView.setCurves(curves);
 				
 			}
@@ -117,20 +121,20 @@ public class Binarize extends JPanel {
 			
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				double val = (double)((JSlider)e.getSource()).getValue();
-				List<Path<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, val/100, 4/3);
+				alphaMax = (double)((JSlider)e.getSource()).getValue()/100;
+				List<Path<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, alphaMin, alphaMax, distanceFactor);
 				dstView.setCurves(curves);
 				
 			}
 		});
         
-        JSlider distanceFactorSlider = new JSlider(SwingConstants.HORIZONTAL, 100, 150, 133);
+        JSlider distanceFactorSlider = new JSlider(SwingConstants.HORIZONTAL, 100, 300, 133);
         distanceFactorSlider.addChangeListener(new ChangeListener() {
 			
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				double val = (double)((JSlider)e.getSource()).getValue();
-				List<Path<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, 1, val/100);
+				distanceFactor = (double)((JSlider)e.getSource()).getValue()/100;
+				List<Path<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, alphaMin, alphaMax, distanceFactor);
 				dstView.setCurves(curves);
 				
 			}
