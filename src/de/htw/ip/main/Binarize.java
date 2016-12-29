@@ -54,7 +54,7 @@ public class Binarize extends JPanel {
 	
 	private ImageView dstView;				// binarized image view
 	private int dstPixels[];
-	private List<List<Point>> polygons;
+	private List<Path<Point>> polygons;
 	
 	private JLabel zoomLabel = new JLabel("Zoom:");
 	private JLabel alphaMinLabel = new JLabel("alphaMin:");
@@ -106,7 +106,7 @@ public class Binarize extends JPanel {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				double val = (double)((JSlider)e.getSource()).getValue();
-				List<List<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, val/100, 1, 4/3);
+				List<Path<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, val/100, 1, 4/3);
 				dstView.setCurves(curves);
 				
 			}
@@ -118,7 +118,7 @@ public class Binarize extends JPanel {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				double val = (double)((JSlider)e.getSource()).getValue();
-				List<List<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, val/100, 4/3);
+				List<Path<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, val/100, 4/3);
 				dstView.setCurves(curves);
 				
 			}
@@ -130,7 +130,7 @@ public class Binarize extends JPanel {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				double val = (double)((JSlider)e.getSource()).getValue();
-				List<List<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, 1, val/100);
+				List<Path<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, 1, val/100);
 				dstView.setCurves(curves);
 				
 			}
@@ -279,7 +279,7 @@ public class Binarize extends JPanel {
 		}
 		
 		polygons = PolygonAlgorithm.optimizedPolygons(contours, width);
-		List<List<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, 1, 4/3);
+		List<Path<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, 1, 4/3);
 
 		dstView.setPaths(contours);
 		dstView.setPolygons(polygons);

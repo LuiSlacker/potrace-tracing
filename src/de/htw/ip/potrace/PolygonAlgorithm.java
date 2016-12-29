@@ -12,9 +12,9 @@ import de.htw.ip.basics.Path;
 
 public class PolygonAlgorithm {
 	
-	public static List<List<Point>> optimizedPolygons(ArrayList<Path<Point>> listpaths, int imgWidth) {
-		List<List<Point>> polygons = new ArrayList<List<Point>>();
-		listpaths.forEach(contour -> polygons.add(optimizedPolygon(contour)));
+	public static List<Path<Point>> optimizedPolygons(ArrayList<Path<Point>> contours, int imgWidth) {
+		List<Path<Point>> polygons = new ArrayList<Path<Point>>();
+		contours.forEach(contour -> polygons.add(optimizedPolygon(contour)));
 		return polygons;
 	}
 	
@@ -26,27 +26,27 @@ public class PolygonAlgorithm {
 	 *   3. build n enclosed polygons out of possible segments starting from each vertex
 	 *   4. return the polygon with fewest segments
 	 */
-	private static List<Point> optimizedPolygon(List<Point> contour) {
+	private static Path<Point> optimizedPolygon(List<Point> contour) {
 		int[] pivots = pivots(contour);
 		int[] possibles = possibles(pivots);
-		List<List<Point>> possiblePolygons = buildPolygons(contour, possibles);
-		return possiblePolygons.stream().min(Comparator.comparing(List<Point>::size)).get();
+		List<Path<Point>> possiblePolygons = buildPolygons(contour, possibles);
+		return possiblePolygons.stream().min(Comparator.comparing(Path<Point>::size)).get();
 	}
 	
 	/**
 	 * builds all enclosed polygons based on possible segments
 	 * @return
 	 */
-	private static List<List<Point>> buildPolygons(List<Point> contour, int[] possibles){
-		List<List<Point>> polygons = new ArrayList<List<Point>>();
+	private static List<Path<Point>> buildPolygons(List<Point> contour, int[] possibles){
+		List<Path<Point>> polygons = new ArrayList<Path<Point>>();
 		for (int i = 0; i < possibles.length; i++) {
 			polygons.add(buildPolygon(contour, possibles, i));
 		}
 		return polygons;
 	}
 	
-	private static List<Point> buildPolygon(List<Point> contour, int[] possibles, int startIndex){
-		List<Point> polygon = new ArrayList<Point>();
+	private static Path<Point> buildPolygon(List<Point> contour, int[] possibles, int startIndex){
+		Path<Point> polygon = new Path<Point>();
 		int currentPointer = startIndex;
 		int nextPointer = getNextPossibleIndex(possibles, startIndex);
 		polygon.add(contour.get(currentPointer));
@@ -55,6 +55,7 @@ public class PolygonAlgorithm {
 			currentPointer = nextPointer;
 			nextPointer = getNextPossibleIndex(possibles, nextPointer);
 		}
+		polygon.setType(((Path<Point>)contour).getType());
 		return polygon;
 	}
 	
