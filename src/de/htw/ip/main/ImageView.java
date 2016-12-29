@@ -15,7 +15,6 @@ import java.awt.SystemColor;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -42,9 +41,8 @@ public class ImageView extends JScrollPane{
 	private boolean centered = true;
 	private boolean showPaths, showVertices, showPolygons, showBezier;
 	private boolean showPxls = true;
-	private ArrayList<Path<Point>> paths;
-	private List<List<Point>> polygons = null;
-	private List<List<CurveElement>> curves = null;
+	private List<Path<Point>> paths = null, polygons = null;
+	private List<Path<CurveElement>> curves = null;
 	private double minWidth =  500;
 	
 	int pixels[] = null;		// pixel array in ARGB format
@@ -89,15 +87,15 @@ public class ImageView extends JScrollPane{
 		screen.repaint();
 	}
 	
-	public void setPaths(ArrayList<Path<Point>> paths){
+	public void setPaths(List<Path<Point>> paths){
 		this.paths = paths;
 	}
 	
-	public void setPolygons(List<List<Point>> polygons) {
+	public void setPolygons(List<Path<Point>> polygons) {
 		this.polygons = polygons;
 	}
 	
-	public void setCurves(List<List<CurveElement>> curves) {
+	public void setCurves(List<Path<CurveElement>> curves) {
 		this.curves = curves;
 		screen.invalidate();
 		screen.repaint();
@@ -447,7 +445,7 @@ public class ImageView extends JScrollPane{
 										(b.midPoint2.y + offsetY) * zoom);
 							}
 						};
-						g2.setColor(Color.BLACK);
+						g2.setColor(((Path<CurveElement>)curve).getType() ? Color.BLACK : Color.WHITE);
 						g2.fill(shape);
 					}
 				}

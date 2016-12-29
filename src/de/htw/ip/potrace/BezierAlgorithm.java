@@ -8,10 +8,11 @@ import java.util.List;
 import de.htw.ip.basics.BezierElement;
 import de.htw.ip.basics.CurveElement;
 import de.htw.ip.basics.LineElement;
+import de.htw.ip.basics.Path;
 
 public class BezierAlgorithm {
-	public static List<List<CurveElement>> generateBezierCurves(List<List<Point>> polygons, double alphaMin, double alphaMax, double distanceFactor){
-		List<List<CurveElement>> bezierCurves = new ArrayList<List<CurveElement>>();
+	public static List<Path<CurveElement>> generateBezierCurves(List<Path<Point>> polygons, double alphaMin, double alphaMax, double distanceFactor){
+		List<Path<CurveElement>> bezierCurves = new ArrayList<Path<CurveElement>>();
 		polygons.forEach(polygon -> {
 			bezierCurves.add(generateBezierCurve(polygon, alphaMin, alphaMax, distanceFactor));
 		});
@@ -22,8 +23,8 @@ public class BezierAlgorithm {
 		return bezierCurves;
 	}
 	
-	private static List<CurveElement> generateBezierCurve(List<Point> polygon, double alphaMin, double alphaMax, double distanceFactor){
-		List<CurveElement> curve = new ArrayList<CurveElement>();
+	private static Path<CurveElement> generateBezierCurve(List<Point> polygon, double alphaMin, double alphaMax, double distanceFactor){
+		Path<CurveElement> curve = new Path<CurveElement>();
 		for (int i = 0; i < polygon.size(); i++) {//
 			Point2D.Double a = new Point2D.Double(polygon.get(i).x, polygon.get(i).y);
 			Point2D.Double midPoint1 = new Point2D.Double(
@@ -53,6 +54,7 @@ public class BezierAlgorithm {
 				curve.add(new BezierElement(z1, z2, midPoint2));
 			}
 		}
+		curve.setType(((Path<Point>)polygon).getType());
 		return curve;
 	}
 		
