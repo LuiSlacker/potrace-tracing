@@ -11,18 +11,22 @@ import de.htw.ip.basics.LineElement;
 import de.htw.ip.basics.Path;
 
 public class BezierAlgorithm {
+	
+	/**
+	 *  calculates a closed curve for each polygon from previous potrace-algorithm
+	 */
 	public static List<Path<CurveElement>> generateBezierCurves(List<Path<Point>> polygons, double alphaMin, double alphaMax, double distanceFactor){
 		List<Path<CurveElement>> bezierCurves = new ArrayList<Path<CurveElement>>();
 		polygons.forEach(polygon -> {
 			bezierCurves.add(generateBezierCurve(polygon, alphaMin, alphaMax, distanceFactor));
 		});
-//		bezierCurves.add(generateBezierCurve(polygons.get(1), alphaMin, alphaMax, distanceFactor));
-		bezierCurves.forEach(curve -> {
-			curve.forEach(elem -> System.out.println(elem.toString()));
-		});
 		return bezierCurves;
 	}
 	
+	/**
+	 * calculates a closed curve of bezier- and line-elements based on certain mutable factors
+	 * 
+	 */
 	private static Path<CurveElement> generateBezierCurve(List<Point> polygon, double alphaMin, double alphaMax, double distanceFactor){
 		Path<CurveElement> curve = new Path<CurveElement>();
 		for (int i = 0; i < polygon.size(); i++) {//
@@ -36,14 +40,13 @@ public class BezierAlgorithm {
 			Point2D.Double s_ = new Point2D.Double(midPoint2.y - midPoint1.y, -midPoint2.x + midPoint1.x);
 			double s_length = Math.sqrt(Math.pow(s_.x, 2) + Math.pow(s_.y, 2));
 			Point2D.Double s = new Point2D.Double(s_.x/s_length, s_.y/s_length );
-			double d = scalarProduct(s, new Point2D.Double(a.x - midPoint1.x, a.y - midPoint1.y));
-			double alpha = (4/3) * (d - 0.5)/d; //distanceFactor 
+			double d = scalarProduct(s, new Point2D.Double(midPoint1.x - a.x, midPoint1.y - a.y));
+			double alpha = distanceFactor * (d - 0.5)/d; 
 			alpha = alpha < alphaMin? alphaMin: alpha;
 			
-			if (alpha < alphaMax){
+			if (alpha > alphaMax){
 				curve.add(new LineElement(a, midPoint2));
 			} else {
-				alpha = 0.7;
 				Point2D.Double z1 = new Point2D.Double(
 						a.x + alpha * (midPoint1.x - a.x),
 						a.y + alpha * (midPoint1.y - a.y));
