@@ -447,7 +447,8 @@ public class ImageView extends JScrollPane{
 										(b.midPoint2.y + offsetY) * zoom);
 							}
 						};
-						g2.draw(shape);
+						g2.setColor(Color.BLACK);
+						g2.fill(shape);
 					}
 				}
 			}

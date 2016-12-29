@@ -40,6 +40,7 @@ import de.htw.ip.potrace.PolygonAlgorithm;
 
 public class Binarize extends JPanel {
 	
+	private final static int BLACK = 0xFF000000;
 	private static final long serialVersionUID = 1L;
 	private static final int border = 10;
 	private static final int maxWidth = 1600;
@@ -55,7 +56,6 @@ public class Binarize extends JPanel {
 	private int dstPixels[];
 	private List<List<Point>> polygons;
 	
-	private JLabel statusLine;				// to print some status text
 	private JLabel zoomLabel = new JLabel("Zoom:");
 	private JLabel alphaMinLabel = new JLabel("alphaMin:");
 	private JLabel alphaMaxLabel = new JLabel("alphaMax:");
@@ -89,9 +89,6 @@ public class Binarize extends JPanel {
         	}        	
         });
          
-        // some status text
-        statusLine = new JLabel(" ");
-        
         final int sliderGranularity = 100;
         JSlider zoomSlider = new JSlider(SwingConstants.HORIZONTAL, 1*sliderGranularity, 200*sliderGranularity, 1*sliderGranularity);
         zoomSlider.addChangeListener(new ChangeListener() {
@@ -269,33 +266,25 @@ public class Binarize extends JPanel {
     	// get pixels arrays
     	dstPixels = dstView.getPixels();
     	
-		long startTime = System.currentTimeMillis();
-		
 //		 potrace contour Algorithm
-		ArrayList<Path<Point>> listpaths = ContourDodo.contourtracking(dstPixels, width, height);
-		listpaths.forEach(listpath -> {
+		ArrayList<Path<Point>> contours = ContourDodo.contourtracking(dstPixels, width, height);
+		contours.forEach(listpath -> {
 			listpath.remove(listpath.size()-1);
 		});
 		
-		for(Path<Point> p: listpaths){
-			Point a = p.get(0);
-			if(dstPixels[a.y * width + a.x]==-16777216){
-				p.setType(true);
-			} else{
-				p.setType(false);
-			}
+		for(Path<Point> contour: contours){
+			Point firstContourPxl = contour.get(0);
+			boolean contourType = (dstPixels[firstContourPxl.y * width + firstContourPxl.x] == BLACK) ? true : false; 
+			contour.setType(contourType);
 		}
 		
-		polygons = PolygonAlgorithm.optimizedPolygons(listpaths, width);
+		polygons = PolygonAlgorithm.optimizedPolygons(contours, width);
 		List<List<CurveElement>> curves = BezierAlgorithm.generateBezierCurves(polygons, 0.55, 1, 4/3);
 
-		dstView.setPaths(listpaths);
+		dstView.setPaths(contours);
 		dstView.setPolygons(polygons);
 		dstView.setCurves(curves);
 		
-		long time = System.currentTimeMillis() - startTime;
-		   	
-		statusLine.setText("Kontourfindung mit potrace in " + time + " ms");
 		dstView.setPixels(dstPixels, width, height);
         frame.pack();
     }
