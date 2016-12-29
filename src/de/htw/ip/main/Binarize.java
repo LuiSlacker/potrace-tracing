@@ -167,6 +167,16 @@ public class Binarize extends JPanel {
 			}
 		});
         
+        JCheckBox grid = new JCheckBox("Grid");
+        grid.setSelected(true);
+        grid.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dstView.setShowGrid(grid.isSelected());
+			}
+		});
+        
         JCheckBox pxls = new JCheckBox("Pixels");
         pxls.setSelected(true);
         pxls.addActionListener(new ActionListener() {
@@ -204,6 +214,7 @@ public class Binarize extends JPanel {
         images.add(dstView);
         
         JPanel controlsBottom = new JPanel(new GridBagLayout());
+        controlsBottom.add(grid, c);
         controlsBottom.add(pxls, c);
         controlsBottom.add(paths, c);
         controlsBottom.add(polygons, c);

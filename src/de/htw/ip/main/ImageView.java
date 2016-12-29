@@ -39,8 +39,7 @@ public class ImageView extends JScrollPane{
 	private double maxViewMagnification = 0.0;		// use 0.0 to disable limits 
 	private boolean keepAspectRatio = true;
 	private boolean centered = true;
-	private boolean showPaths, showVertices, showPolygons, showBezier;
-	private boolean showPxls = true;
+	private boolean showPaths, showVertices, showPolygons, showBezier, showPxls = true, showGrid = true;
 	private List<Path<Point>> paths = null, polygons = null;
 	private List<Path<CurveElement>> curves = null;
 	private double minWidth =  500;
@@ -77,6 +76,12 @@ public class ImageView extends JScrollPane{
 	
 	public void setShowPixels(boolean showPxls) {
 		this.showPxls = showPxls;
+		screen.invalidate();
+		screen.repaint();
+	}
+	
+	public void setShowGrid(boolean showGrid) {
+		this.showGrid = showGrid;
 		screen.invalidate();
 		screen.repaint();
 	}
@@ -352,7 +357,7 @@ public class ImageView extends JScrollPane{
 				}
 
 				// draw grid
-				if (zoom > 4) {
+				if (zoom > 4 && showGrid) {
 					int w = (int)(image.getWidth() * zoom);
 					int h = (int)(image.getHeight() * zoom);
 					g.setColor(Color.lightGray);
