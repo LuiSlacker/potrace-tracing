@@ -116,7 +116,7 @@ public class Binarize extends JPanel {
 			}
 		});
         
-        JSlider alphaMaxSlider = new JSlider(SwingConstants.HORIZONTAL, 100, 120, 100);
+        JSlider alphaMaxSlider = new JSlider(SwingConstants.HORIZONTAL, 50, 200, 100);
         alphaMaxSlider.addChangeListener(new ChangeListener() {
 			
 			@Override
