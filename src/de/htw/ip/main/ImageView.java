@@ -43,9 +43,16 @@ public class ImageView extends JScrollPane{
 	private List<Path<Point>> paths = null, polygons = null;
 	private List<Path<CurveElement>> curves = null;
 	private double minWidth =  500;
+	private boolean fillBezier = false;
 	
 	int pixels[] = null;		// pixel array in ARGB format
 	private double zoom = 1.0;
+	
+	public void setfillBezier(boolean fill){
+		this.fillBezier = fill;
+		screen.invalidate();
+		screen.repaint();
+	}
 	
 	public double getZoom() {
 		return zoom;
@@ -451,7 +458,13 @@ public class ImageView extends JScrollPane{
 							}
 						};
 						g2.setColor(((Path<CurveElement>)curve).getType() ? Color.BLACK : Color.WHITE);
-						g2.fill(shape);
+						if(fillBezier){
+							g2.setColor(((Path<CurveElement>)curve).getType() ? Color.BLACK : Color.WHITE);
+							g2.fill(shape);
+						}else{
+							g2.setColor(Color.ORANGE);
+							g2.draw(shape);
+						}
 					}
 				}
 			}

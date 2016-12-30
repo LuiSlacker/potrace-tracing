@@ -196,6 +196,15 @@ public class Binarize extends JPanel {
 			}
 		});
         
+        JCheckBox fill = new JCheckBox("Fill");
+        fill.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dstView.setfillBezier(fill.isSelected());
+			}
+		});
+        
         // arrange all controls
         JPanel controls = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -220,6 +229,7 @@ public class Binarize extends JPanel {
         controlsBottom.add(polygons, c);
         controlsBottom.add(vertices, c);
         controlsBottom.add(bezier, c);
+        controlsBottom.add(fill, c);
         
         add(controls, BorderLayout.NORTH);
         add(images, BorderLayout.CENTER);
