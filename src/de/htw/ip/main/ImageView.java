@@ -459,7 +459,6 @@ public class ImageView extends JScrollPane{
 						};
 						g2.setColor(((Path<CurveElement>)curve).getType() ? Color.BLACK : Color.WHITE);
 						if(fillBezier){
-							g2.setColor(((Path<CurveElement>)curve).getType() ? Color.BLACK : Color.WHITE);
 							g2.fill(shape);
 						}else{
 							g2.setColor(Color.ORANGE);
@@ -478,12 +477,7 @@ public class ImageView extends JScrollPane{
 				}
 				return new Dimension((int)(zoom*image.getWidth()), (int)(zoom*image.getHeight()));
 			}
-			else
-				return new Dimension(100, 60);
-//			if(image != null) 
-//				return new Dimension((int) (zoom * image.getWidth()), (int) (zoom * image.getHeight()));
-//			else
-//				return new Dimension(100, 60);
+			else return new Dimension(100, 60);
 		}
 		
 		public void drawCenteredCircle(Graphics2D g, int x, int y, int r) {
